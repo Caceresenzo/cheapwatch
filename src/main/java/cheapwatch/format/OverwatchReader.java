@@ -12,7 +12,7 @@ import org.joml.Vector3fc;
 import org.joml.Vector4f;
 import org.joml.Vector4fc;
 
-import cheapwatch.util.LEB128Util;
+import cheapwatch.util.LEB128;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -28,7 +28,7 @@ public class OverwatchReader {
 	}
 
 	public long readUnsignedInteger() {
-		return LEB128Util.read(buffer);
+		return LEB128.read(buffer);
 	}
 
 	public String readString() {

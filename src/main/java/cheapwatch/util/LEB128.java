@@ -13,7 +13,7 @@ import lombok.experimental.UtilityClass;
  * @author https://git.eclipse.org/r/plugins/gitiles/tracecompass.incubator/org.eclipse.tracecompass.incubator/+/refs/changes/80/200680/4/tracetypes/org.eclipse.tracecompass.incubator.golang.core/src/org/eclipse/tracecompass/incubator/internal/golang/core/trace/LEB128Util.java
  */
 @UtilityClass
-public class LEB128Util {
+public class LEB128 {
 
 	/**
 	 * Read leb128... we're really doing 64 here
