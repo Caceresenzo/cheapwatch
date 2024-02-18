@@ -2,6 +2,10 @@ package cheapwatch.format;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Supplier;
 
 import org.joml.Quaternionf;
 import org.joml.Quaternionfc;
@@ -22,17 +26,29 @@ public class OverwatchReader {
 
 	public OverwatchVersion readVersion() {
 		return new OverwatchVersion(
-			Short.toUnsignedInt(buffer.getShort()),
-			Short.toUnsignedInt(buffer.getShort())
+			readUnsignedShort(),
+			readUnsignedShort()
 		);
 	}
 
+	public int readUnsignedShort() {
+		return Short.toUnsignedInt(buffer.getShort());
+	}
+
+	public long readUnsignedLong() {
+		return buffer.getLong();
+	}
+
+	public int readUnsignedByte() {
+		return Byte.toUnsignedInt(buffer.get());
+	}
+
 	public long readUnsignedInteger() {
-		return LEB128.read(buffer);
+		return Integer.toUnsignedLong(buffer.getInt());
 	}
 
 	public String readString() {
-		final var length = Math.toIntExact(readUnsignedInteger());
+		final var length = Math.toIntExact(LEB128.read(buffer));
 		final var data = new byte[length];
 		buffer.get(data);
 
@@ -84,6 +100,26 @@ public class OverwatchReader {
 
 	public float readLong() {
 		return buffer.getLong();
+	}
+
+	public <T> List<T> readArray(int length, Supplier<T> readFunction) {
+		final var elements = new ArrayList<T>(length);
+
+		for (var index = 0; index < length; ++index) {
+			elements.add(readFunction.get());
+		}
+
+		return Collections.unmodifiableList(elements);
+	}
+
+	public <T> List<List<T>> readArray2(int length1, int length2, Supplier<T> readFunction) {
+		final var lists = new ArrayList<List<T>>(length1);
+
+		for (var index = 0; index < length1; ++index) {
+			lists.add(readArray(length2, readFunction));
+		}
+
+		return Collections.unmodifiableList(lists);
 	}
 
 }
