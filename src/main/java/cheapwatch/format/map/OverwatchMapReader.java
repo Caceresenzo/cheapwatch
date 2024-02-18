@@ -1,7 +1,6 @@
 package cheapwatch.format.map;
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.Collections;
 
 import cheapwatch.format.OverwatchReader;
@@ -26,26 +25,12 @@ public class OverwatchMapReader extends OverwatchReader {
 		final var propCount = readAndCastUnsignedInteger();
 		final var lightCount = readAndCastUnsignedInteger();
 
-		final var objects = new ArrayList<OverwatchObject>(objectCount);
-		for (var index = 0; index < objectCount; ++index) {
-			objects.add(readObject());
-		}
-
-		final var props = new ArrayList<OverwatchProp>(propCount);
-		for (var index = 0; index < propCount; ++index) {
-			props.add(readProp());
-		}
-
-		final var lights = new ArrayList<OverwatchLight>(propCount);
-		for (var index = 0; index < lightCount; ++index) {
-			lights.add(readLight());
-		}
+		final var objects = readArray(objectCount, this::readObject);
+		final var props = readArray(propCount, this::readProp);
+		final var lights = readArray(lightCount, this::readLight);
 
 		final var soundCount = readAndCastUnsignedInteger();
-		final var sounds = new ArrayList<OverwatchSound>(soundCount);
-		for (var index = 0; index < soundCount; ++index) {
-			sounds.add(readSound());
-		}
+		final var sounds = readArray(soundCount, this::readSound);
 
 		return new OverwatchMap(
 			name,
@@ -60,14 +45,11 @@ public class OverwatchMapReader extends OverwatchReader {
 		final var modelPath = readString();
 
 		final var groupCount = readAndCastUnsignedInteger();
-		final var groups = new ArrayList<OverwatchGroup>(groupCount);
-		for (var index = 0; index < groupCount; ++index) {
-			groups.add(readGroup());
-		}
+		final var groups = readArray(groupCount, this::readGroup);
 
 		return new OverwatchObject(
 			modelPath,
-			Collections.unmodifiableList(groups)
+			groups
 		);
 	}
 
@@ -75,14 +57,11 @@ public class OverwatchMapReader extends OverwatchReader {
 		final var materialPath = readString();
 
 		final var instanceCount = readAndCastUnsignedInteger();
-		final var instances = new ArrayList<OverwatchInstance>(instanceCount);
-		for (var index = 0; index < instanceCount; ++index) {
-			instances.add(readInstance());
-		}
+		final var instances = readArray(instanceCount, this::readInstance);
 
 		return new OverwatchGroup(
 			materialPath,
-			Collections.unmodifiableList(instances)
+			instances
 		);
 	}
 
@@ -139,10 +118,7 @@ public class OverwatchMapReader extends OverwatchReader {
 		final var position = readVector3();
 
 		final var count = readAndCastUnsignedInteger();
-		final var paths = new ArrayList<String>(count);
-		for (var index = 0; index < count; ++index) {
-			paths.add(readString());
-		}
+		final var paths = readArray(count, this::readString);
 
 		return new OverwatchSound(
 			position,
