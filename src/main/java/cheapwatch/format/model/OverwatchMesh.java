@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.joml.Vector2fc;
 import org.joml.Vector3fc;
+import org.joml.Vector3ic;
 import org.joml.Vector4fc;
 
 public record OverwatchMesh(
@@ -16,5 +17,5 @@ public record OverwatchMesh(
 	List<List<Integer>> boneIndexess,
 	List<List<Float>> boneWeights,
 	List<List<Vector4fc>> colorss,
-	List<List<Integer>> indexess
+	List<Vector3ic> indexes
 ) {}

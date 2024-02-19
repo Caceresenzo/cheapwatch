@@ -5,7 +5,7 @@ import java.nio.ByteBuffer;
 import cheapwatch.format.OverwatchReader;
 import cheapwatch.format.OverwatchVersion;
 
-public class OverwatchModelReader extends OverwatchReader {
+public class OverwatchModelReader extends OverwatchReader<OverwatchModel> {
 
 	public static final OverwatchVersion VERSION = new OverwatchVersion(2, 0);
 
@@ -13,6 +13,7 @@ public class OverwatchModelReader extends OverwatchReader {
 		super(buffer);
 	}
 
+	@Override
 	public OverwatchModel get() {
 		final var version = readVersion();
 		if (!VERSION.equals(version)) {
@@ -73,7 +74,7 @@ public class OverwatchModelReader extends OverwatchReader {
 		final var boneIndexess = readArray2(boneCount, vertexCount, this::readUnsignedShort);
 		final var boneWeightss = readArray2(boneCount, vertexCount, this::readFloat);
 		final var colorss = readArray2(2, vertexCount, this::readVector4);
-		final var indexess = readArray2(indexCount, 3, this::readAndCastUnsignedInteger);
+		final var indexes = readArray(indexCount, this::readVector3i);
 
 		return new OverwatchMesh(
 			name,
@@ -85,7 +86,7 @@ public class OverwatchModelReader extends OverwatchReader {
 			boneIndexess,
 			boneWeightss,
 			colorss,
-			indexess
+			indexes
 		);
 	}
 

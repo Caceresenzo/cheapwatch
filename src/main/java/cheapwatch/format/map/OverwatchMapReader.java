@@ -6,7 +6,7 @@ import java.util.Collections;
 import cheapwatch.format.OverwatchReader;
 import cheapwatch.format.OverwatchVersion;
 
-public class OverwatchMapReader extends OverwatchReader {
+public class OverwatchMapReader extends OverwatchReader<OverwatchMap> {
 
 	public static final OverwatchVersion VERSION = new OverwatchVersion(2, 1);
 
@@ -14,6 +14,7 @@ public class OverwatchMapReader extends OverwatchReader {
 		super(buffer);
 	}
 
+	@Override
 	public OverwatchMap get() {
 		final var version = readVersion();
 		if (!VERSION.equals(version)) {

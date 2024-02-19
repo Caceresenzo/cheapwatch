@@ -85,8 +85,8 @@ public class VertexArray {
 			buffers.add(buffer);
 		}
 
-		buffer.unbind();
 		unbind();
+		buffer.unbind();
 
 		return this;
 	}
@@ -102,8 +102,8 @@ public class VertexArray {
 			buffers.add(buffer);
 		}
 
-		buffer.unbind();
 		unbind();
+		buffer.unbind();
 
 		return this;
 	}
@@ -121,7 +121,6 @@ public class VertexArray {
 		}
 
 		unbind();
-		shaderProgram.unuse();
 	}
 
 	public void delete(boolean includeBuffers) {
