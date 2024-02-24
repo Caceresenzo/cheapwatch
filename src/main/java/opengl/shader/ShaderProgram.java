@@ -18,6 +18,7 @@ import java.util.List;
 import lombok.Getter;
 import opengl.OpenGL;
 import opengl.shader.variable.attribute.Attribute;
+import opengl.shader.variable.attribute.DoubleAttribute;
 import opengl.shader.variable.attribute.FloatAttribute;
 import opengl.shader.variable.attribute.IntegerAttribute;
 import opengl.shader.variable.uniform.BooleanUniform;
@@ -53,6 +54,14 @@ public class ShaderProgram {
 
 	public void delete() {
 		cleanable.clean();
+	}
+
+	protected DoubleAttribute createDoubleAttribute(String name, int size) {
+		final var attribute = DoubleAttribute.ofDouble(this, name, size);
+
+		attributes.add(attribute);
+
+		return attribute;
 	}
 
 	protected FloatAttribute createFloatAttribute(String name, int size) {
