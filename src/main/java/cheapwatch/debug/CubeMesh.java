@@ -1,20 +1,23 @@
 package cheapwatch.debug;
 
+import java.util.List;
+
 import org.joml.Matrix4f;
 import org.joml.Vector3fc;
 
 import cheapwatch.render.Camera;
+import cheapwatch.render.SimpleShaderProgram;
 import opengl.vertex.BufferUsage;
 import opengl.vertex.VertexArray;
 import opengl.vertex.VertexBuffer;
 
 public class CubeMesh {
 
-	private final ScopShaderProgram shaderProgram;
+	private final SimpleShaderProgram shaderProgram;
 	private VertexArray vertexArray;
 	private Matrix4f modelMatrix;
 
-	public CubeMesh(ScopShaderProgram shaderProgram) {
+	public CubeMesh(SimpleShaderProgram shaderProgram) {
 		this.shaderProgram = shaderProgram;
 		this.modelMatrix = new Matrix4f();
 
@@ -56,7 +59,7 @@ public class CubeMesh {
 
 		final var array = new VertexArray(shaderProgram);
 		array.add(indices);
-		array.add(positions);
+		array.add(positions, List.of(shaderProgram.position));
 
 		if (vertexArray != null) {
 			vertexArray.delete(true);

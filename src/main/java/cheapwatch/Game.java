@@ -51,15 +51,18 @@ import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
-import org.lwjgl.opengl.GLUtil;
 import org.lwjgl.system.MemoryStack;
 
 import cheapwatch.state.GameState;
 import cheapwatch.state.NullGameState;
 import opengl.OpenGL;
+import opengl.OpenGLContext;
 
 public class Game {
 
@@ -129,15 +132,16 @@ public class Game {
 
 		glfwMakeContextCurrent(window);
 		glfwSwapInterval(0);
-//		glfwSwapInterval(1);
+		//		glfwSwapInterval(1);
 
 		glfwShowWindow(window);
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	}
 
 	private static void loop() {
+		glfwMakeContextCurrent(window);
 		GL.createCapabilities();
-		GLUtil.setupDebugMessageCallback(System.err);
+		//		GLUtil.setupDebugMessageCallback(System.err);
 
 		glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
 		glEnable(GL_DEPTH_TEST);
@@ -149,30 +153,38 @@ public class Game {
 		var previousTime = glfwGetTime();
 		var frameCount = 0;
 
-		while (!glfwWindowShouldClose(window)) {
-			var currentTime = glfwGetTime();
-			frameCount++;
+		glfwMakeContextCurrent(0);
 
-			if (currentTime - previousTime >= 1.0) {
-				glfwSetWindowTitle(window, "FPS: %d".formatted(frameCount));
+		while (true) {
+			try (final var context = acquireContext()) {
+				if (glfwWindowShouldClose(window)) {
+					break;
+				}
 
-				frameCount = 0;
-				previousTime = currentTime;
+				var currentTime = glfwGetTime();
+				frameCount++;
+
+				if (currentTime - previousTime >= 1.0) {
+					glfwSetWindowTitle(window, "FPS: %d".formatted(frameCount));
+
+					frameCount = 0;
+					previousTime = currentTime;
+				}
+
+				OpenGL.processDeleteActions();
+
+				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+				final var state = initializeStateIfNecessary();
+
+				state.update();
+				state.render();
+
+				glfwSwapBuffers(window);
+				glfwPollEvents();
+
+				OpenGL.checkErrors();
 			}
-
-			OpenGL.processDeleteActions();
-
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-			final var state = initializeStateIfNecessary();
-
-			state.update();
-			state.render();
-
-			glfwSwapBuffers(window);
-			glfwPollEvents();
-
-			OpenGL.checkErrors();
 		}
 	}
 
@@ -198,6 +210,30 @@ public class Game {
 
 	public static GameState getState() {
 		return state;
+	}
+
+	private static final Lock LOCK = new ReentrantLock(true);
+
+	private static final ThreadLocal<Boolean> CREATED_CAPABILITIES = new ThreadLocal<>();
+
+	public static OpenGLContext acquireContext() {
+		final var requireCreate = !Boolean.TRUE.equals(CREATED_CAPABILITIES.get());
+		if (requireCreate) {
+			CREATED_CAPABILITIES.set(true);
+		}
+
+		LOCK.lock();
+
+		glfwMakeContextCurrent(window);
+
+		if (requireCreate) {
+			GL.createCapabilities();
+		}
+
+		return () -> {
+			glfwMakeContextCurrent(NULL);
+			LOCK.unlock();
+		};
 	}
 
 }

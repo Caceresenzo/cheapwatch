@@ -1,5 +1,6 @@
 package cheapwatch.format;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -9,8 +10,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.function.Function;
 
+import javax.imageio.ImageIO;
+
 import cheapwatch.format.map.OverwatchMap;
 import cheapwatch.format.map.OverwatchMapReader;
+import cheapwatch.format.material.OverwatchMaterial;
+import cheapwatch.format.material.OverwatchMaterialReader;
+import cheapwatch.format.material.OverwatchModelLook;
+import cheapwatch.format.material.OverwatchModelLookReader;
 import cheapwatch.format.model.OverwatchModel;
 import cheapwatch.format.model.OverwatchModelReader;
 import lombok.AccessLevel;
@@ -29,8 +36,26 @@ public class OverwatchLoader {
 		return load(relative, OverwatchModelReader::new);
 	}
 
+	public OverwatchModelLook loadModelLook(Path relative) throws IOException {
+		return load(relative, OverwatchModelLookReader::new);
+	}
+
+	public OverwatchMaterial loadMaterial(Path relative) throws IOException {
+		return load(relative, OverwatchMaterialReader::new);
+	}
+
+	public BufferedImage loadTexture(Path relative) throws IOException {
+		final var path = resolve(relative);
+
+		return ImageIO.read(path.toFile());
+	}
+
+	public Path resolve(Path relative) {
+		return root.resolve(relative);
+	}
+
 	public <T> T load(Path relative, Function<ByteBuffer, OverwatchReader<T>> readerFactory) throws IOException {
-		final var path = root.resolve(relative);
+		final var path = resolve(relative);
 		final var size = Files.size(path);
 
 		try (final var fileChannel = FileChannel.open(path)) {

@@ -17,7 +17,6 @@ import static org.lwjgl.glfw.GLFW.glfwGetKey;
 import static org.lwjgl.system.MemoryStack.stackPush;
 
 import java.nio.DoubleBuffer;
-import java.text.NumberFormat;
 
 import org.joml.Vector2i;
 import org.joml.Vector3f;
@@ -47,7 +46,7 @@ public class MovableCamera extends Camera {
 		handleMouse();
 		super.update();
 
-				System.out.println(((Vector3f) getPosition()).toString(NumberFormat.getInstance()) + "  " + getPitch() + "   " + getYaw());
+		//				System.out.println(((Vector3f) getPosition()).toString(NumberFormat.getInstance()) + "  " + getPitch() + "   " + getYaw());
 	}
 
 	private boolean handleMouse() {

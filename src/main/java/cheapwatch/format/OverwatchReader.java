@@ -19,6 +19,8 @@ import org.joml.Vector4f;
 import org.joml.Vector4fc;
 
 import cheapwatch.util.LEB128;
+import it.unimi.dsi.fastutil.bytes.ByteArrayList;
+import it.unimi.dsi.fastutil.bytes.ByteList;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -132,6 +134,13 @@ public abstract class OverwatchReader<T> {
 		}
 
 		return Collections.unmodifiableList(lists);
+	}
+
+	public ByteList readBytes(int length) {
+		final var array = new byte[length];
+		buffer.get(array);
+		
+		return ByteArrayList.wrap(array);
 	}
 
 }

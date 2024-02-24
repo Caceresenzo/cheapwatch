@@ -97,7 +97,7 @@ public class OverwatchMapReader extends OverwatchReader<OverwatchMap> {
 	public OverwatchLight readLight() {
 		final var position = readVector3();
 		final var rotation = readQuaternion();
-		final var type = OverwatchLight.Type.valueOf(readAndCastUnsignedInteger());
+		final var type = OverwatchLightType.valueOf(readAndCastUnsignedInteger());
 		final var fov = readFloat();
 		final var color = readVector3();
 		final var intensity = readFloat();
