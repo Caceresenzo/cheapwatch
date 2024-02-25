@@ -73,6 +73,8 @@ public class OverwatchLoader {
 
 	public <T> T load(Path relative, Function<ByteBuffer, OverwatchReader<T>> readerFactory) throws IOException {
 		final var path = resolve(relative);
+		System.out.println("loading " + relative);
+		
 		final var size = Files.size(path);
 
 		try (final var fileChannel = FileChannel.open(path)) {
