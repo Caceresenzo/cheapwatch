@@ -72,7 +72,12 @@ public abstract class OverwatchReader<T> {
 		final var data = new byte[length];
 		buffer.get(data);
 
-		return new String(data, StandardCharsets.US_ASCII);
+		final var string = new String(data, StandardCharsets.US_ASCII);
+		if ("null".equals(string)) {
+			return null;
+		}
+		
+		return string;
 	}
 
 	public Vector2fc readVector2() {
