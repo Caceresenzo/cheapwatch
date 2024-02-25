@@ -79,14 +79,14 @@ public class OverwatchMapReader extends OverwatchReader<OverwatchMap> {
 	}
 
 	public OverwatchProp readProp() {
-		final var modelPath = readString();
+		final var entityPath = readString();
 		final var materialPath = readString();
 		final var position = readVector3();
 		final var scale = readVector3();
 		final var rotation = readQuaternion();
 
 		return new OverwatchProp(
-			modelPath,
+			entityPath,
 			materialPath,
 			position,
 			scale,

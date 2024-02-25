@@ -4,7 +4,7 @@ import org.joml.Quaternionfc;
 import org.joml.Vector3fc;
 
 public record OverwatchProp(
-	String modelPath,
+	String entityPath,
 	String materialPath,
 	Vector3fc position,
 	Vector3fc scale,
