@@ -18,6 +18,16 @@ import java.util.Iterator;
 
 public class Bootstrap {
 
+    public static ShaderDataType fromBlenderSocketIdName(String idName) {
+        return switch (idName) {
+            case "NodeSocketColor" -> ShaderDataType.VECTOR;
+            case "NodeSocketFloat" -> ShaderDataType.VALUE;
+            case "NodeSocketFloatFactor" -> ShaderDataType.VALUE;
+            case "NodeSocketShader" -> ShaderDataType.VALUE; // TODO ??
+            default -> throw new IllegalStateException("unknown socket idname: " + idName);
+        };
+    }
+
     public static void main(String[] args) throws Exception {
         final var objectMapper = new ObjectMapper();
         final var root = (ObjectNode) objectMapper.readTree(Bootstrap.class.getResourceAsStream("/owm_unpack_blue_channel.json"));
@@ -30,11 +40,11 @@ public class Bootstrap {
 
         int index = 0;
         for (final var jsonNode : root.get("inputs")) {
+            final var blenderSocketIdName = jsonNode.get("bl_socket_idname").asText();
             final var name = jsonNode.get("name").asText();
-            final var rawType = jsonNode.get("type").asText();
             final var defaultValue = jsonNode.get("default_value");
 
-            final var type = ShaderDataType.valueOf(rawType);
+            final var type = fromBlenderSocketIdName(blenderSocketIdName);
 
             group.addInput(new ShaderPort(
                     name,
@@ -46,11 +56,10 @@ public class Bootstrap {
 
         index = 0;
         for (final var jsonNode : root.get("outputs")) {
+            final var blenderSocketIdName = jsonNode.get("bl_socket_idname").asText();
             final var name = jsonNode.get("name").asText();
-            final var rawType = jsonNode.get("type");
 
-            // TODO use bl_socket_idname to resolve type
-            final var type = ShaderDataType.VALUE;
+            final var type = fromBlenderSocketIdName(blenderSocketIdName);
 
             group.addOutput(new ShaderPort(
                     name,
