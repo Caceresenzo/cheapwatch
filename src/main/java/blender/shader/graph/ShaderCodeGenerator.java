@@ -45,7 +45,7 @@ public class ShaderCodeGenerator {
 
         final var inputsArray = new ShaderVariable[node.getInputs().size()];
         for (final var link : node.getReverseLinks()) {
-            final var variable = getOrAllocateVariable(link.fromNode(), link.fromPort());
+            final var variable = getOrAllocateVariable(link.fromNode(), link.fromPort(), true);
             final var index = link.toPort().index();
 
             if (inputsArray[index] != null) {
@@ -71,7 +71,8 @@ public class ShaderCodeGenerator {
 
             final var variable = new ShaderVariable(
                     port.type().renderDefaultValue(defaultValue) + comment,
-                    port
+                    port,
+                    true
             );
 
             inputsArray[index] = variable;
@@ -80,9 +81,24 @@ public class ShaderCodeGenerator {
         final var inputs = Arrays.asList(inputsArray);
 
         final var outputArray = new ShaderVariable[node.getOutputs().size()];
+        for (final var link : node.getLinks()) {
+            final var variable = getOrAllocateVariable(link.fromNode(), link.fromPort(), true);
+            final var index = link.fromPort().index();
+
+            if (outputArray[index] != null) {
+                continue;
+            }
+
+            outputArray[index] = variable;
+        }
+
         for (int index = 0; index < outputArray.length; index++) {
+            if (outputArray[index] != null) {
+                continue;
+            }
+
             final var port = node.getOutputs().get(index);
-            final var variable = getOrAllocateVariable(node, port);
+            final var variable = getOrAllocateVariable(node, port, false);
 
             outputArray[index] = variable;
         }
@@ -96,7 +112,7 @@ public class ShaderCodeGenerator {
         return builder.toString();
     }
 
-    public ShaderVariable getOrAllocateVariable(ShaderNode node, ShaderPort port) {
+    public ShaderVariable getOrAllocateVariable(ShaderNode node, ShaderPort port, boolean used) {
         final var key = Map.entry(node, port);
         var variable = allocatedVariables.get(key);
 
@@ -113,7 +129,7 @@ public class ShaderCodeGenerator {
                 }
             }
 
-            variable = new ShaderVariable(name, port);
+            variable = new ShaderVariable(name, port, used);
 
             allocatedVariables.put(key, variable);
             allocatedVariableNames.add(name);

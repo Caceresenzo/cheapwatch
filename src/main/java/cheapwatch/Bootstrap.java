@@ -3,9 +3,11 @@ package cheapwatch;
 import blender.shader.ShaderDataType;
 import blender.shader.ShaderPort;
 import blender.shader.graph.ShaderCodeGenerator;
+import blender.shader.graph.ShaderNodeGraph;
 import blender.shader.graph.SimpleShaderNodeGraph;
 import blender.shader.group.ShaderNodeGroup;
 import blender.shader.node.*;
+import cheapwatch.state.PlayState;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -18,8 +20,10 @@ public class Bootstrap {
 
     public static void main(String[] args) throws Exception {
         final var objectMapper = new ObjectMapper();
-//        final var root = (ObjectNode) objectMapper.readTree(Bootstrap.class.getResourceAsStream("/owm_unpack_blue_channel.json"));
-        final var root = (ObjectNode) objectMapper.readTree(Bootstrap.class.getResourceAsStream("/owm_unpack_pbr_v2.json"));
+        final var root = (ObjectNode) objectMapper.readTree(Bootstrap.class.getResourceAsStream("/owm_unpack_blue_channel.json"));
+//        final var root = (ObjectNode) objectMapper.readTree(Bootstrap.class.getResourceAsStream("/owm_unpack_pbr_v2.json"));
+//        final var root = (ObjectNode) objectMapper.readTree(Bootstrap.class.getResourceAsStream("/owm_basic.json"));
+//        final var root = (ObjectNode) objectMapper.readTree(Bootstrap.class.getResourceAsStream("/owm_blend_1_b.json"));
 
         final var group = new ShaderNodeGroup();
         group.setName(root.get("name").asText());
@@ -71,11 +75,11 @@ public class Bootstrap {
                 case "ShaderNodeValue" -> new ValueShaderNode(0.0f);
                 case "ShaderNodeMath" -> {
                     final var rawOperation = attributes.get("operation").asText();
-                    // final var useClamp = attributes.get("use_clamp").asBoolean();
+                    final var clamp = attributes.get("use_clamp").asBoolean();
 
                     final var operation = MathShaderNode.Operation.valueOf(rawOperation);
 
-                    yield new MathShaderNode(operation);
+                    yield new MathShaderNode(operation, clamp);
                 }
                 case "ShaderNodeVectorMath" -> {
                     final var rawOperation = attributes.get("operation").asText();
@@ -84,18 +88,28 @@ public class Bootstrap {
 
                     yield new MathVectorShaderNode(operation);
                 }
+                case "ShaderNodeGroup" -> {
+                    final var treeName = attributes.get("node_tree").asText();
+
+                    final var subGroup = new ShaderNodeGroup();
+                    subGroup.setName(treeName);
+
+                    yield subGroup;
+                }
                 default -> throw new IllegalStateException("unknown blender idname: " + blenderIdName);
             };
 
             final var name = jsonNode.get("name").asText();
             shaderNode.setName(name);
 
-            final var inputs = jsonNode.get("inputs");
-            for (final var input : inputs) {
-                final var portIndex = input.get("index").asInt();
-                final var defaultValue = input.get("default_value");
+            if (!(shaderNode instanceof ShaderNodeGroup)) {
+                final var inputs = jsonNode.get("inputs");
+                for (final var input : inputs) {
+                    final var portIndex = input.get("index").asInt();
+                    final var defaultValue = input.get("default_value");
 
-                shaderNode.addInputOverrides(portIndex, defaultValue);
+                    shaderNode.addInputOverrides(portIndex, defaultValue);
+                }
             }
 
             shaderNodes.put(name, shaderNode);
@@ -121,8 +135,8 @@ public class Bootstrap {
         System.out.println(codeGenerator.generate());
     }
 
-    public static void mainx(String[] args) {
-//		Game.run(new PlayState());
+    public static void xmain(String[] args) {
+		Game.run(new PlayState());
 
         final var first = new VectorShaderNode(new Vector3f(15, 2, 2001));
         first.setName("first");
@@ -133,10 +147,10 @@ public class Bootstrap {
         final var two = new ValueShaderNode(2.0f);
         two.setName("two");
 
-        final var multiply = new MathShaderNode(MathShaderNode.Operation.MULTIPLY);
+        final var multiply = new MathShaderNode(MathShaderNode.Operation.MULTIPLY, false);
         multiply.setName("multiply");
 
-        final var add = new MathShaderNode(MathShaderNode.Operation.ADD);
+        final var add = new MathShaderNode(MathShaderNode.Operation.ADD, false);
         add.setName("add");
 
         final var combine = new CombineXYZShaderNode();

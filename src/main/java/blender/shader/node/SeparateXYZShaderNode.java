@@ -48,6 +48,11 @@ public class SeparateXYZShaderNode extends ShaderNode {
     }
 
     public void generateCode(StringBuilder builder, ShaderVariable input, ShaderVariable output, String outputComponent) {
+        if (output.unused()) {
+            builder
+                    .append("// ");
+        }
+
         builder
                 .append(output.type().getCodeType())
                 .append(" ")
@@ -57,6 +62,11 @@ public class SeparateXYZShaderNode extends ShaderNode {
                 .append(".")
                 .append(outputComponent)
                 .append(";");
+
+        if (output.unused()) {
+            builder
+                    .append(" /*unused*/");
+        }
     }
 
 }

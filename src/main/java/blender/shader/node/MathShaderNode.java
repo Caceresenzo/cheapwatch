@@ -23,6 +23,7 @@ public class MathShaderNode extends ShaderNode {
     );
 
     private final Operation operation;
+    private final boolean clamp;
 
     @Override
     public List<ShaderPort> getInputs() {
@@ -44,7 +45,17 @@ public class MathShaderNode extends ShaderNode {
                 .append(result.name())
                 .append(" = ");
 
+        if (clamp) {
+            builder
+                    .append("clamp(");
+        }
+
         operation.generateCode(builder, inputs);
+
+        if (clamp) {
+            builder
+                    .append(", 0.0f, 1.0f)");
+        }
 
         builder
                 .append(";");
@@ -86,7 +97,13 @@ public class MathShaderNode extends ShaderNode {
         //		ARCSINE,
         //		ARCCOSINE,
         //		ARCTANGENT,
-        //		POWER,
+        POWER {
+            @Override
+            public void generateCode(StringBuilder builder, List<ShaderVariable> inputs) {
+                generateBiFunctionCallCode(builder, inputs, "pow");
+            }
+
+        },
         //		LOGARITHM,
         //		MINIMUM,
         //		MAXIMUM,
@@ -140,6 +157,19 @@ public class MathShaderNode extends ShaderNode {
                     .append(functionName)
                     .append("(")
                     .append(a.name())
+                    .append(")");
+        }
+
+        private static void generateBiFunctionCallCode(StringBuilder builder, List<ShaderVariable> inputs, String functionName) {
+            final var a = inputs.get(0);
+            final var b = inputs.get(1);
+
+            builder
+                    .append(functionName)
+                    .append("(")
+                    .append(a.name())
+                    .append(", ")
+                    .append(b.name())
                     .append(")");
         }
 
