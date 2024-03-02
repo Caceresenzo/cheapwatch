@@ -1,7 +1,7 @@
 package blender.shader.node;
 
 import blender.shader.ShaderDataType;
-import blender.shader.ShaderPort;
+import blender.shader.ShaderSocket;
 import blender.shader.ShaderVariable;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -14,27 +14,27 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MathVectorShaderNode extends ShaderNode {
 
-    public static final List<ShaderPort> INPUTS = List.of(
-            new ShaderPort("A", ShaderDataType.VECTOR, new Vector3f(), 0),
-            new ShaderPort("B", ShaderDataType.VECTOR, new Vector3f(), 1),
-            new ShaderPort("C", ShaderDataType.VECTOR, new Vector3f(), 2),
-            new ShaderPort("Scale", ShaderDataType.VALUE, 1.0f, 3)
+    public static final List<ShaderSocket<?>> INPUTS = List.of(
+            new ShaderSocket<>("Vector", ShaderDataType.VECTOR, new Vector3f(), 0),
+            new ShaderSocket<>("Vector", "Vector_001", ShaderDataType.VECTOR, new Vector3f(), 1),
+            new ShaderSocket<>("Vector", "Vector_002", ShaderDataType.VECTOR, new Vector3f(), 2),
+            new ShaderSocket<>("Scale", ShaderDataType.VALUE, 1.0f, 3)
     );
 
-    public static final List<ShaderPort> OUTPUTS = List.of(
-            new ShaderPort("Vector", ShaderDataType.VECTOR, new Vector3f(), 0),
-            new ShaderPort("Value", ShaderDataType.VALUE, 0.0f, 1)
+    public static final List<ShaderSocket<?>> OUTPUTS = List.of(
+            new ShaderSocket<>("Vector", ShaderDataType.VECTOR, new Vector3f(), 0),
+            new ShaderSocket<>("Value", ShaderDataType.VALUE, 0.0f, 1)
     );
 
     private final Operation operation;
 
     @Override
-    public List<ShaderPort> getInputs() {
+    public List<ShaderSocket<?>> getInputs() {
         return INPUTS;
     }
 
     @Override
-    public List<ShaderPort> getOutputs() {
+    public List<ShaderSocket<?>> getOutputs() {
         return OUTPUTS;
     }
 

@@ -1,7 +1,7 @@
 package blender.shader.node;
 
 import blender.shader.ShaderDataType;
-import blender.shader.ShaderPort;
+import blender.shader.ShaderSocket;
 import blender.shader.ShaderVariable;
 import lombok.ToString;
 import org.joml.Vector3f;
@@ -11,23 +11,23 @@ import java.util.List;
 @ToString(callSuper = true)
 public class SeparateXYZShaderNode extends ShaderNode {
 
-    public static final List<ShaderPort> INPUTS = List.of(
-            new ShaderPort("Vector", ShaderDataType.VECTOR, new Vector3f(), 0)
+    public static final List<ShaderSocket<?>> INPUTS = List.of(
+            new ShaderSocket<>("Vector", ShaderDataType.VECTOR, new Vector3f(), 0)
     );
 
-    public static final List<ShaderPort> OUTPUTS = List.of(
-            new ShaderPort("X", ShaderDataType.VALUE, 0.0f, 0),
-            new ShaderPort("Y", ShaderDataType.VALUE, 0.0f, 1),
-            new ShaderPort("Z", ShaderDataType.VALUE, 0.0f, 2)
+    public static final List<ShaderSocket<?>> OUTPUTS = List.of(
+            new ShaderSocket<>("X", ShaderDataType.VALUE, 0.0f, 0),
+            new ShaderSocket<>("Y", ShaderDataType.VALUE, 0.0f, 1),
+            new ShaderSocket<>("Z", ShaderDataType.VALUE, 0.0f, 2)
     );
 
     @Override
-    public List<ShaderPort> getInputs() {
+    public List<ShaderSocket<?>> getInputs() {
         return INPUTS;
     }
 
     @Override
-    public List<ShaderPort> getOutputs() {
+    public List<ShaderSocket<?>> getOutputs() {
         return OUTPUTS;
     }
 

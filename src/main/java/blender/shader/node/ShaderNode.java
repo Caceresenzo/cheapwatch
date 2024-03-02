@@ -1,14 +1,11 @@
 package blender.shader.node;
 
 import blender.shader.ShaderLink;
-import blender.shader.ShaderPort;
+import blender.shader.ShaderSocket;
 import blender.shader.ShaderVariable;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 import lombok.experimental.Accessors;
-import org.apache.commons.lang3.builder.EqualsExclude;
 
 import java.util.*;
 
@@ -17,42 +14,33 @@ import java.util.*;
 public abstract class ShaderNode {
 
     private String name;
-    private final Map<ShaderPort, Object> inputOverrides = new HashMap<>();
+    private final Map<ShaderSocket<?>, Object> inputOverrides = new HashMap<>();
     private final List<ShaderLink> links = new ArrayList<>();
     private final List<ShaderLink> reverseLinks = new ArrayList<>();
 
-    public abstract List<ShaderPort> getInputs();
+    public abstract List<ShaderSocket<?>> getInputs();
 
-    public abstract List<ShaderPort> getOutputs();
+    public abstract List<ShaderSocket<?>> getOutputs();
 
     public abstract void generateCode(StringBuilder builder, List<ShaderVariable> inputs, List<ShaderVariable> outputs);
 
-    public ShaderNode addInputOverrides(int portIndex, JsonNode valueNode) {
-        final var port = getInputs().get(portIndex);
-        final var defaultValue = port.type().parseDefaultValue(valueNode);
+    public ShaderNode addInputOverrides(ShaderSocket<?> socket, JsonNode valueNode) {
+        final var defaultValue = socket.type().parse(valueNode);
 
-        inputOverrides.put(port, defaultValue);
+        inputOverrides.put(socket, defaultValue);
 
         return this;
     }
 
-    public ShaderNode addLink(String fromPortName, ShaderNode toNode, String toPortName) {
-        return addLink(
-            getOutput(fromPortName).orElseThrow(),
-            toNode,
-            toNode.getInput(toPortName).orElseThrow()
-        );
-    }
-
     public ShaderNode addLink(int fromPortIndex, ShaderNode toNode, int toPortIndex) {
         return addLink(
-            this.getOutputs().get(fromPortIndex),
-            toNode,
-            toNode.getInputs().get(toPortIndex)
+                this.getOutputs().get(fromPortIndex),
+                toNode,
+                toNode.getInputs().get(toPortIndex)
         );
     }
 
-    public ShaderNode addLink(ShaderPort fromPort, ShaderNode toNode, ShaderPort toPort) {
+    public ShaderNode addLink(ShaderSocket<?> fromPort, ShaderNode toNode, ShaderSocket<?> toPort) {
         final var link = new ShaderLink(
                 this,
                 fromPort,
@@ -66,18 +54,24 @@ public abstract class ShaderNode {
         return this;
     }
 
-    public Optional<ShaderPort> getInput(String name) {
-        return findShaderPort(getInputs(), name);
+    public Optional<ShaderSocket<?>> getInput(int index, String name) {
+        return findShaderPort(getInputs(), index, name);
     }
 
-    public Optional<ShaderPort> getOutput(String name) {
-        return findShaderPort(getOutputs(), name);
+    public Optional<ShaderSocket<?>> getOutput(int index, String name) {
+        return findShaderPort(getOutputs(), index, name);
     }
 
-    private Optional<ShaderPort> findShaderPort(List<ShaderPort> ports, String name) {
-        return ports.stream()
+    private Optional<ShaderSocket<?>> findShaderPort(List<ShaderSocket<?>> ports, int index, String name) {
+        final var found = ports.stream()
                 .filter((port) -> port.name().equalsIgnoreCase(name))
-                .findFirst();
+                .toList();
+
+        if (found.size() == 1) {
+            return Optional.of(found.getFirst());
+        }
+
+        return Optional.of(ports.get(index));
     }
 
 }

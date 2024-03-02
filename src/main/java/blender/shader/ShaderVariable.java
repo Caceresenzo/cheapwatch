@@ -2,7 +2,7 @@ package blender.shader;
 
 public record ShaderVariable(
         String name,
-        ShaderPort port,
+        ShaderSocket port,
         boolean used
 ) {
 

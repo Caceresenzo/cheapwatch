@@ -1,6 +1,6 @@
 package blender.shader.graph;
 
-import blender.shader.ShaderPort;
+import blender.shader.ShaderSocket;
 import blender.shader.ShaderVariable;
 import blender.shader.node.ShaderNode;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +11,7 @@ import java.util.*;
 public class ShaderCodeGenerator {
 
     private final ShaderNodeGraph nodeGraph;
-    private final Map<Map.Entry<ShaderNode, ShaderPort>, ShaderVariable> allocatedVariables = new HashMap<>();
+    private final Map<Map.Entry<ShaderNode, ShaderSocket>, ShaderVariable> allocatedVariables = new HashMap<>();
     private final Set<String> allocatedVariableNames = new HashSet<>();
     private final List<ShaderNode> visitedNodes = new ArrayList<>(); // nodes does not support hashCode
 
@@ -70,7 +70,7 @@ public class ShaderCodeGenerator {
             }
 
             final var variable = new ShaderVariable(
-                    port.type().renderDefaultValue(defaultValue) + comment,
+                    port.type().render(defaultValue) + comment,
                     port,
                     true
             );
@@ -112,7 +112,7 @@ public class ShaderCodeGenerator {
         return builder.toString();
     }
 
-    public ShaderVariable getOrAllocateVariable(ShaderNode node, ShaderPort port, boolean used) {
+    public ShaderVariable getOrAllocateVariable(ShaderNode node, ShaderSocket port, boolean used) {
         final var key = Map.entry(node, port);
         var variable = allocatedVariables.get(key);
 

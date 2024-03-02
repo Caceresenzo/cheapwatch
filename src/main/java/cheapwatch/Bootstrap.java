@@ -1,24 +1,21 @@
 package cheapwatch;
 
 import blender.shader.ShaderDataType;
-import blender.shader.ShaderPort;
+import blender.shader.ShaderSocket;
 import blender.shader.graph.ShaderCodeGenerator;
-import blender.shader.graph.ShaderNodeGraph;
 import blender.shader.graph.SimpleShaderNodeGraph;
 import blender.shader.group.ShaderNodeGroup;
 import blender.shader.node.*;
 import cheapwatch.state.PlayState;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.joml.Vector3f;
 
 import java.util.HashMap;
-import java.util.Iterator;
 
 public class Bootstrap {
 
-    public static ShaderDataType fromBlenderSocketIdName(String idName) {
+    public static ShaderDataType<?> fromBlenderSocketIdName(String idName) {
         return switch (idName) {
             case "NodeSocketColor" -> ShaderDataType.VECTOR;
             case "NodeSocketFloat" -> ShaderDataType.VALUE;
@@ -30,9 +27,9 @@ public class Bootstrap {
 
     public static void main(String[] args) throws Exception {
         final var objectMapper = new ObjectMapper();
-        final var root = (ObjectNode) objectMapper.readTree(Bootstrap.class.getResourceAsStream("/owm_unpack_blue_channel.json"));
+//        final var root = (ObjectNode) objectMapper.readTree(Bootstrap.class.getResourceAsStream("/owm_unpack_blue_channel.json"));
 //        final var root = (ObjectNode) objectMapper.readTree(Bootstrap.class.getResourceAsStream("/owm_unpack_pbr_v2.json"));
-//        final var root = (ObjectNode) objectMapper.readTree(Bootstrap.class.getResourceAsStream("/owm_basic.json"));
+        final var root = (ObjectNode) objectMapper.readTree(Bootstrap.class.getResourceAsStream("/owm_basic.json"));
 //        final var root = (ObjectNode) objectMapper.readTree(Bootstrap.class.getResourceAsStream("/owm_blend_1_b.json"));
 
         final var group = new ShaderNodeGroup();
@@ -46,10 +43,10 @@ public class Bootstrap {
 
             final var type = fromBlenderSocketIdName(blenderSocketIdName);
 
-            group.addInput(new ShaderPort(
+            group.addInput(new ShaderSocket(
                     name,
                     type,
-                    type.parseDefaultValue(defaultValue),
+                    type.parse(defaultValue),
                     index++
             ));
         }
@@ -61,15 +58,13 @@ public class Bootstrap {
 
             final var type = fromBlenderSocketIdName(blenderSocketIdName);
 
-            group.addOutput(new ShaderPort(
+            group.addOutput(new ShaderSocket<>(
                     name,
                     type,
                     null,
                     index++
             ));
         }
-
-        System.out.println(group.getOutputs());
 
         final var shaderNodes = new HashMap<String, ShaderNode>();
         for (final var jsonNode : root.get("nodes")) {
@@ -79,6 +74,9 @@ public class Bootstrap {
             final var shaderNode = switch (blenderIdName.asText()) {
                 case "ShaderNodeCombineXYZ" -> new CombineXYZShaderNode();
                 case "ShaderNodeSeparateXYZ" -> new SeparateXYZShaderNode();
+                case "ShaderNodeMix" -> new MixShaderNode();
+                case "ShaderNodeNormalMap" -> new NormalMapShaderNode();
+                case "ShaderNodeBsdfPrincipled" -> new BsdfPrincipledShaderNode();
                 case "NodeGroupInput" -> group.getInputNode();
                 case "NodeGroupOutput" -> group.getOutputNode();
                 case "ShaderNodeValue" -> new ValueShaderNode(0.0f);
@@ -109,15 +107,23 @@ public class Bootstrap {
             };
 
             final var name = jsonNode.get("name").asText();
+            System.out.println(name);
             shaderNode.setName(name);
 
             if (!(shaderNode instanceof ShaderNodeGroup)) {
                 final var inputs = jsonNode.get("inputs");
                 for (final var input : inputs) {
-                    final var portIndex = input.get("index").asInt();
+                    final var inputName = input.get("name").asText();
+                    final var inputIndex = input.get("index").asInt();
                     final var defaultValue = input.get("default_value");
 
-                    shaderNode.addInputOverrides(portIndex, defaultValue);
+                    final var socket = shaderNode.getInput(inputIndex, inputName).orElseThrow();
+
+                    System.out.println(input);
+//                    System.out.println(shaderNode.getInputs());
+                    System.out.println(defaultValue);
+                    System.out.println(defaultValue.getClass());
+                    shaderNode.addInputOverrides(socket, defaultValue);
                 }
             }
 
@@ -146,82 +152,6 @@ public class Bootstrap {
 
     public static void xmain(String[] args) {
 		Game.run(new PlayState());
-
-        final var first = new VectorShaderNode(new Vector3f(15, 2, 2001));
-        first.setName("first");
-
-        final var separate = new SeparateXYZShaderNode();
-        separate.setName("separate");
-
-        final var two = new ValueShaderNode(2.0f);
-        two.setName("two");
-
-        final var multiply = new MathShaderNode(MathShaderNode.Operation.MULTIPLY, false);
-        multiply.setName("multiply");
-
-        final var add = new MathShaderNode(MathShaderNode.Operation.ADD, false);
-        add.setName("add");
-
-        final var combine = new CombineXYZShaderNode();
-        combine.setName("combine");
-
-        first.addLink(
-                "Vector",
-                separate,
-                "Vector"
-        );
-
-        separate.addLink(
-                "X",
-                multiply,
-                "A"
-        );
-
-        separate.addLink(
-                "Y",
-                add,
-                "A"
-        );
-
-        two.addLink(
-                "Value",
-                multiply,
-                "B"
-        );
-
-        two.addLink(
-                "Value",
-                add,
-                "B"
-        );
-
-        multiply.addLink(
-                "Value",
-                combine,
-                "X"
-        );
-
-        add.addLink(
-                "Value",
-                combine,
-                "Y"
-        );
-
-        separate.addLink(
-                "Z",
-                combine,
-                "Z"
-        );
-
-        final var nodeGraph = new SimpleShaderNodeGraph()
-                .addNode(first)
-                .addNode(separate)
-                .addNode(two)
-                .addNode(multiply)
-                .addNode(combine);
-
-        final var codeGenerator = new ShaderCodeGenerator(nodeGraph);
-        System.out.println(codeGenerator.generate());
     }
 
 }

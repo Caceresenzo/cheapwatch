@@ -3,7 +3,7 @@ package blender.shader.node;
 import java.util.List;
 
 import blender.shader.ShaderDataType;
-import blender.shader.ShaderPort;
+import blender.shader.ShaderSocket;
 import blender.shader.ShaderVariable;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -12,26 +12,26 @@ import lombok.ToString;
 @RequiredArgsConstructor
 public class MathShaderNode extends ShaderNode {
 
-    public static final List<ShaderPort> INPUTS = List.of(
-            new ShaderPort("A", ShaderDataType.VALUE, 0.5f, 0),
-            new ShaderPort("B", ShaderDataType.VALUE, 0.5f, 1),
-            new ShaderPort("C", ShaderDataType.VALUE, 0.5f, 2)
+    public static final List<ShaderSocket<?>> INPUTS = List.of(
+            new ShaderSocket<>("A", ShaderDataType.VALUE, 0.5f, 0),
+            new ShaderSocket<>("B", ShaderDataType.VALUE, 0.5f, 1),
+            new ShaderSocket<>("C", ShaderDataType.VALUE, 0.5f, 2)
     );
 
-    public static final List<ShaderPort> OUTPUTS = List.of(
-            new ShaderPort("Value", ShaderDataType.VALUE, 0.0f, 0)
+    public static final List<ShaderSocket<?>> OUTPUTS = List.of(
+            new ShaderSocket<>("Value", ShaderDataType.VALUE, 0.0f, 0)
     );
 
     private final Operation operation;
     private final boolean clamp;
 
     @Override
-    public List<ShaderPort> getInputs() {
+    public List<ShaderSocket<?>> getInputs() {
         return INPUTS;
     }
 
     @Override
-    public List<ShaderPort> getOutputs() {
+    public List<ShaderSocket<?>> getOutputs() {
         return OUTPUTS;
     }
 

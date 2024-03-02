@@ -1,7 +1,7 @@
 package blender.shader.group;
 
 import blender.shader.ShaderVariable;
-import blender.shader.ShaderPort;
+import blender.shader.ShaderSocket;
 import blender.shader.node.ShaderNode;
 import blender.shader.graph.ShaderNodeGraph;
 import lombok.Getter;
@@ -14,8 +14,8 @@ import java.util.Optional;
 @Getter
 public class ShaderNodeGroup extends ShaderNode implements ShaderNodeGraph {
 
-    private final List<ShaderPort> inputs = new ArrayList<>();
-    private final List<ShaderPort> outputs = new ArrayList<>();
+    private final List<ShaderSocket<?>> inputs = new ArrayList<>();
+    private final List<ShaderSocket<?>> outputs = new ArrayList<>();
     private final List<ShaderNode> nodes = new ArrayList<>();
 
     private final ShaderGroupOutputNode outputNode;
@@ -29,12 +29,12 @@ public class ShaderNodeGroup extends ShaderNode implements ShaderNodeGraph {
     @Override
     public void generateCode(StringBuilder builder, List<ShaderVariable> inputs, List<ShaderVariable> outputs) {}
 
-    public ShaderNodeGroup addInput(ShaderPort input) {
+    public ShaderNodeGroup addInput(ShaderSocket<?> input) {
         this.inputs.add(input);
         return this;
     }
 
-    public ShaderNodeGroup addOutput(ShaderPort output) {
+    public ShaderNodeGroup addOutput(ShaderSocket<?> output) {
         this.outputs.add(output);
         return this;
     }
@@ -44,11 +44,11 @@ public class ShaderNodeGroup extends ShaderNode implements ShaderNodeGraph {
         return this;
     }
 
-    public List<ShaderPort> getInputs() {
+    public List<ShaderSocket<?>> getInputs() {
         return Collections.unmodifiableList(inputs);
     }
 
-    public List<ShaderPort> getOutputs() {
+    public List<ShaderSocket<?>> getOutputs() {
         return Collections.unmodifiableList(outputs);
     }
 

@@ -7,16 +7,16 @@ import java.util.UUID;
 public record ShaderLink(
         UUID id,
         ShaderNode fromNode,
-        ShaderPort fromPort,
+        ShaderSocket<?> fromPort,
         ShaderNode toNode,
-        ShaderPort toPort
+        ShaderSocket<?> toPort
 ) {
 
     public ShaderLink(
             ShaderNode fromNode,
-            ShaderPort fromPort,
+            ShaderSocket<?> fromPort,
             ShaderNode toNode,
-            ShaderPort toPort
+            ShaderSocket<?> toPort
     ) {
         this(
                 UUID.randomUUID(),

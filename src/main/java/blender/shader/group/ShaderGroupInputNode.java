@@ -1,12 +1,11 @@
 package blender.shader.group;
 
-import blender.shader.ShaderPort;
+import blender.shader.ShaderSocket;
 import blender.shader.ShaderVariable;
 import blender.shader.node.ShaderNode;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ShaderGroupInputNode extends ShaderNode {
 
@@ -19,12 +18,12 @@ public class ShaderGroupInputNode extends ShaderNode {
     }
 
     @Override
-    public List<ShaderPort> getInputs() {
+    public List<ShaderSocket<?>> getInputs() {
         return Collections.emptyList();
     }
 
     @Override
-    public List<ShaderPort> getOutputs() {
+    public List<ShaderSocket<?>> getOutputs() {
         return group.getInputs();
     }
 

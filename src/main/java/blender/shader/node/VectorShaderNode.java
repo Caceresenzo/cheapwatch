@@ -1,7 +1,7 @@
 package blender.shader.node;
 
 import blender.shader.ShaderDataType;
-import blender.shader.ShaderPort;
+import blender.shader.ShaderSocket;
 import blender.shader.ShaderVariable;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -17,17 +17,17 @@ public class VectorShaderNode extends ShaderNode {
 
     private final Vector3fc value;
 
-    public static final List<ShaderPort> OUTPUTS = List.of(
-            new ShaderPort("Vector", ShaderDataType.VECTOR, new Vector3f(0.0f), 0)
+    public static final List<ShaderSocket<?>> OUTPUTS = List.of(
+            new ShaderSocket<>("Vector", ShaderDataType.VECTOR, 0)
     );
 
     @Override
-    public List<ShaderPort> getInputs() {
+    public List<ShaderSocket<?>> getInputs() {
         return Collections.emptyList();
     }
 
     @Override
-    public List<ShaderPort> getOutputs() {
+    public List<ShaderSocket<?>> getOutputs() {
         return OUTPUTS;
     }
 
@@ -40,7 +40,7 @@ public class VectorShaderNode extends ShaderNode {
                 .append(" ")
                 .append(x.name())
                 .append(" = ")
-                .append(x.port().type().renderDefaultValue(value))
+                .append(x.port().type().render(value))
                 .append(";");
     }
 
