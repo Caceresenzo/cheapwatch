@@ -2,7 +2,7 @@ import bpy
 import json
 
 input_fields = ["name", "bl_socket_idname", "type", "default_value", "is_linked"]
-output_fields = ["name", "bl_socket_idname", "is_linked"]
+output_fields = ["name", "bl_socket_idname", "type", "is_linked"]
 
 library = {}
 
@@ -129,14 +129,12 @@ for group in bpy.data.node_groups:
             "from_node": link.from_node.name,
             "from_socket": {
                 "type": link.from_socket.type,
-                "node": link.from_socket.node.name,
                 "identifier": link.from_socket.identifier,
                 "index": list(link.from_node.outputs).index(link.from_socket),
             },
             "to_node": link.to_node.name,
             "to_socket": {
                 "type": link.to_socket.type,
-                "node": link.to_socket.node.name,
                 "identifier": link.to_socket.identifier,
                 "index": list(link.to_node.inputs).index(link.to_socket),
             },
