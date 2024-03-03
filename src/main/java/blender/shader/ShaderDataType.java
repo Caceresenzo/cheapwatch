@@ -40,15 +40,25 @@ public abstract class ShaderDataType<T> {
 
 		@Override
 		public Vector3fc parse(JsonNode valueNode) {
-			if (valueNode instanceof NumericNode) {
-				return new Vector3f(valueNode.floatValue());
-			}
-
-			final var x = valueNode.get(0).floatValue();
-			final var y = valueNode.get(1).floatValue();
-			final var z = valueNode.get(2).floatValue();
+			final var x = valueNode.get("x").floatValue();
+			final var y = valueNode.get("y").floatValue();
+			final var z = valueNode.get("z").floatValue();
 
 			return new Vector3f(x, y, z);
+		}
+
+	};
+
+	public static final ShaderDataType<Vector3fc> ROTATION = new ShaderDataType<>("ROTATION", VECTOR.codeType, VECTOR.defaultValue) {
+
+		@Override
+		public String render(Object value) {
+			return VECTOR.render(value);
+		}
+
+		@Override
+		public Vector3fc parse(JsonNode valueNode) {
+			return VECTOR.parse(valueNode);
 		}
 
 	};
@@ -64,30 +74,30 @@ public abstract class ShaderDataType<T> {
 
 		@Override
 		public Vector4f parse(JsonNode valueNode) {
-			if (valueNode instanceof NumericNode) {
-				return new Vector4f(valueNode.floatValue());
-			}
+			final var x = valueNode.get("x").floatValue();
+			final var y = valueNode.get("y").floatValue();
+			final var z = valueNode.get("z").floatValue();
+			final var a = valueNode.get("a").floatValue();
 
-			final var x = valueNode.get(0).floatValue();
-			final var y = valueNode.get(1).floatValue();
-			final var z = valueNode.get(2).floatValue();
-			final var w = valueNode.get(3).floatValue();
-
-			return new Vector4f(x, y, z, w);
+			return new Vector4f(x, y, z, a);
 		}
 
 	};
 
-	public static final ShaderDataType<Void> SHADER = new ShaderDataType<>("SHADER", "auto", null) {
+	public static final ShaderDataType<Vector4fc> SHADER = new ShaderDataType<>("SHADER", RGBA.codeType, RGBA.defaultValue) {
 
 		@Override
 		public String render(Object value) {
-			return "auto %s".formatted(value);
+			return RGBA.render(value);
 		}
 
 		@Override
-		public Void parse(JsonNode valueNode) {
-			return null;
+		public Vector4fc parse(JsonNode valueNode) {
+			if (valueNode == null) {
+				return null;
+			}
+
+			return RGBA.parse(valueNode);
 		}
 
 	};
@@ -96,7 +106,7 @@ public abstract class ShaderDataType<T> {
 	private final String codeType;
 	private final T defaultValue;
 
-	public abstract String render(Object value);
+    public abstract String render(Object value);
 
 	public abstract T parse(JsonNode valueNode);
 
@@ -108,6 +118,17 @@ public abstract class ShaderDataType<T> {
 	@Override
 	public int hashCode() {
 		return name.hashCode();
+	}
+
+	public static ShaderDataType<?> valueOf(String name) {
+		return switch (name) {
+			case "VALUE" -> VALUE;
+			case "VECTOR" -> VECTOR;
+			case "RGBA" -> RGBA;
+			case "ROTATION" -> ROTATION;
+			case "SHADER" -> SHADER;
+			default -> throw new IllegalArgumentException("unknown type: %s".formatted(name));
+		};
 	}
 
 }

@@ -1,4 +1,7 @@
-package blender.shader;
+package blender.shader.code;
+
+import blender.shader.ShaderDataType;
+import blender.shader.ShaderSocket;
 
 public record ShaderVariable(
         String name,

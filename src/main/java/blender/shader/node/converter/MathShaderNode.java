@@ -1,12 +1,13 @@
-package blender.shader.node;
-
-import java.util.List;
+package blender.shader.node.converter;
 
 import blender.shader.ShaderDataType;
 import blender.shader.ShaderSocket;
-import blender.shader.ShaderVariable;
+import blender.shader.code.ShaderVariable;
+import blender.shader.node.ShaderNode;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+
+import java.util.List;
 
 @ToString(callSuper = true)
 @RequiredArgsConstructor
@@ -94,8 +95,20 @@ public class MathShaderNode extends ShaderNode {
         //		SINE,
         //		COSINE,
         //		TANGENT,
-        //		ARCSINE,
-        //		ARCCOSINE,
+        ARCSINE {
+            @Override
+            public void generateCode(StringBuilder builder, List<ShaderVariable> inputs) {
+                generateBiFunctionCallCode(builder, inputs, "asin");
+            }
+
+        },
+        ARCCOSINE {
+            @Override
+            public void generateCode(StringBuilder builder, List<ShaderVariable> inputs) {
+                generateBiFunctionCallCode(builder, inputs, "acos");
+            }
+
+        },
         //		ARCTANGENT,
         POWER {
             @Override
@@ -105,10 +118,28 @@ public class MathShaderNode extends ShaderNode {
 
         },
         //		LOGARITHM,
-        //		MINIMUM,
-        //		MAXIMUM,
+        MINIMUM {
+            @Override
+            public void generateCode(StringBuilder builder, List<ShaderVariable> inputs) {
+                generateBiFunctionCallCode(builder, inputs, "min");
+            }
+
+        },
+        MAXIMUM {
+            @Override
+            public void generateCode(StringBuilder builder, List<ShaderVariable> inputs) {
+                generateBiFunctionCallCode(builder, inputs, "max");
+            }
+
+        },
         //		ROUND,
-        //		LESS_THAN,
+        LESS_THAN {
+            @Override
+            public void generateCode(StringBuilder builder, List<ShaderVariable> inputs) {
+                generateComparisonCode(builder, inputs, "<");
+            }
+
+        },
         GREATER_THAN {
             @Override
             public void generateCode(StringBuilder builder, List<ShaderVariable> inputs) {
@@ -123,7 +154,7 @@ public class MathShaderNode extends ShaderNode {
                 generateFunctionCallCode(builder, inputs, "abs");
             }
 
-        };
+        },
 
         //		ARCTAN2,
         //		FLOOR,
@@ -142,7 +173,13 @@ public class MathShaderNode extends ShaderNode {
         //		SNAP,
         //		WRAP,
         //		COMPARE,
-        //		MULTIPLY_ADD,
+        MULTIPLY_ADD {
+            @Override
+            public void generateCode(StringBuilder builder, List<ShaderVariable> inputs) {
+                generateTrinaryCode(builder, inputs, "*", "+");
+            }
+
+        };
         //		PINGPONG,
         //		SMOOTH_MIN,
         //		SMOOTH_MAX,
@@ -183,6 +220,23 @@ public class MathShaderNode extends ShaderNode {
                     .append(operator)
                     .append(" ")
                     .append(b.name());
+        }
+
+        private static void generateTrinaryCode(StringBuilder builder, List<ShaderVariable> inputs, String operator1, String operator2) {
+            final var a = inputs.get(0);
+            final var b = inputs.get(1);
+            final var c = inputs.get(2);
+
+            builder
+                    .append(a.name())
+                    .append(" ")
+                    .append(operator1)
+                    .append(" ")
+                    .append(b.name())
+                    .append(" ")
+                    .append(operator2)
+                    .append(" ")
+                    .append(c.name());
         }
 
         private static void generateComparisonCode(StringBuilder builder, List<ShaderVariable> inputs, String operator) {

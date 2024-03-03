@@ -1,8 +1,9 @@
-package blender.shader.node;
+package blender.shader.node.converter;
 
 import blender.shader.ShaderDataType;
 import blender.shader.ShaderSocket;
-import blender.shader.ShaderVariable;
+import blender.shader.code.ShaderVariable;
+import blender.shader.node.ShaderNode;
 import lombok.ToString;
 import org.joml.Vector3f;
 

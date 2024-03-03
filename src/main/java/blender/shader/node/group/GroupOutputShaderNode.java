@@ -1,17 +1,20 @@
-package blender.shader.group;
+package blender.shader.node.group;
 
 import blender.shader.ShaderSocket;
-import blender.shader.ShaderVariable;
+import blender.shader.code.ShaderVariable;
 import blender.shader.node.ShaderNode;
+import lombok.ToString;
 
 import java.util.Collections;
 import java.util.List;
 
-public class ShaderGroupOutputNode extends ShaderNode {
+@ToString(callSuper = true)
+public class GroupOutputShaderNode extends ShaderNode {
 
+    @ToString.Exclude
     private final ShaderNodeGroup group;
 
-    ShaderGroupOutputNode(ShaderNodeGroup group) {
+    GroupOutputShaderNode(ShaderNodeGroup group) {
         this.group = group;
 
         setName("Group Output");

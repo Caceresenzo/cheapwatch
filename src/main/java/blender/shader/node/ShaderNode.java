@@ -2,7 +2,7 @@ package blender.shader.node;
 
 import blender.shader.ShaderLink;
 import blender.shader.ShaderSocket;
-import blender.shader.ShaderVariable;
+import blender.shader.code.ShaderVariable;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -24,9 +24,7 @@ public abstract class ShaderNode {
 
     public abstract void generateCode(StringBuilder builder, List<ShaderVariable> inputs, List<ShaderVariable> outputs);
 
-    public ShaderNode addInputOverrides(ShaderSocket<?> socket, JsonNode valueNode) {
-        final var defaultValue = socket.type().parse(valueNode);
-
+    public ShaderNode addInputOverrides(ShaderSocket<?> socket, Object defaultValue) {
         inputOverrides.put(socket, defaultValue);
 
         return this;
@@ -40,12 +38,12 @@ public abstract class ShaderNode {
         );
     }
 
-    public ShaderNode addLink(ShaderSocket<?> fromPort, ShaderNode toNode, ShaderSocket<?> toPort) {
+    public ShaderNode addLink(ShaderSocket<?> fromSocket, ShaderNode toNode, ShaderSocket<?> toSocket) {
         final var link = new ShaderLink(
                 this,
-                fromPort,
+                fromSocket,
                 toNode,
-                toPort
+                toSocket
         );
 
         this.links.add(link);
@@ -54,24 +52,12 @@ public abstract class ShaderNode {
         return this;
     }
 
-    public Optional<ShaderSocket<?>> getInput(int index, String name) {
-        return findShaderPort(getInputs(), index, name);
+    public ShaderSocket<?> getInput(int index) {
+        return getInputs().get(index);
     }
 
-    public Optional<ShaderSocket<?>> getOutput(int index, String name) {
-        return findShaderPort(getOutputs(), index, name);
-    }
-
-    private Optional<ShaderSocket<?>> findShaderPort(List<ShaderSocket<?>> ports, int index, String name) {
-        final var found = ports.stream()
-                .filter((port) -> port.name().equalsIgnoreCase(name))
-                .toList();
-
-        if (found.size() == 1) {
-            return Optional.of(found.getFirst());
-        }
-
-        return Optional.of(ports.get(index));
+    public ShaderSocket<?> getOutput(int index) {
+        return getOutputs().get(index);
     }
 
 }

@@ -1,8 +1,9 @@
-package blender.shader.node;
+package blender.shader.node.converter;
 
 import blender.shader.ShaderDataType;
 import blender.shader.ShaderSocket;
-import blender.shader.ShaderVariable;
+import blender.shader.code.ShaderVariable;
+import blender.shader.node.ShaderNode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -12,7 +13,7 @@ import java.util.List;
 
 @ToString(callSuper = true)
 @RequiredArgsConstructor
-public class MathVectorShaderNode extends ShaderNode {
+public class VectorMathShaderNode extends ShaderNode {
 
     public static final List<ShaderSocket<?>> INPUTS = List.of(
             new ShaderSocket<>("Vector", ShaderDataType.VECTOR, new Vector3f(), 0),
@@ -91,7 +92,13 @@ public class MathVectorShaderNode extends ShaderNode {
 
         },
         //
-//        CROSS_PRODUCT,
+        CROSS_PRODUCT(true) {
+            @Override
+            public void generateCode(StringBuilder builder, List<ShaderVariable> inputs) {
+                generateFunctionCallCode(builder, inputs, "cross");
+            }
+
+        },
 //        PROJECT,
 //        REFLECT,
         DOT_PRODUCT(false) {
@@ -103,7 +110,13 @@ public class MathVectorShaderNode extends ShaderNode {
         },
         //
 //        DISTANCE,
-//        LENGTH,
+        LENGTH(false) {
+            @Override
+            public void generateCode(StringBuilder builder, List<ShaderVariable> inputs) {
+                generateFunctionCallCode(builder, inputs, "length");
+            }
+
+        },
 //        SCALE,
         NORMALIZE(true) {
             @Override
@@ -122,12 +135,30 @@ public class MathVectorShaderNode extends ShaderNode {
 //        MINIMUM,
 //        MAXIMUM,
 //        WRAP,
-//        SINE,
-//        COSINE,
+        SINE(true) {
+            @Override
+            public void generateCode(StringBuilder builder, List<ShaderVariable> inputs) {
+                generateFunctionCallCode(builder, inputs, "sin");
+            }
+
+        },
+        COSINE(true) {
+            @Override
+            public void generateCode(StringBuilder builder, List<ShaderVariable> inputs) {
+                generateFunctionCallCode(builder, inputs, "cos");
+            }
+
+        },
 //        TANGENT,
 //        REFRACT,
 //        FACEFORWARD,
-//        MULTIPLY_ADD,
+        MULTIPLY_ADD(true) {
+            @Override
+            public void generateCode(StringBuilder builder, List<ShaderVariable> inputs) {
+                generateTrinaryCode(builder, inputs, "*", "+");
+            }
+
+        },
         _END(false) {
             @Override
             public void generateCode(StringBuilder builder, List<ShaderVariable> inputs) {
@@ -159,6 +190,23 @@ public class MathVectorShaderNode extends ShaderNode {
                     .append(operator)
                     .append(" ")
                     .append(b.name());
+        }
+
+        private static void generateTrinaryCode(StringBuilder builder, List<ShaderVariable> inputs, String operator1, String operator2) {
+            final var a = inputs.get(0);
+            final var b = inputs.get(1);
+            final var c = inputs.get(2);
+
+            builder
+                    .append(a.name())
+                    .append(" ")
+                    .append(operator1)
+                    .append(" ")
+                    .append(b.name())
+                    .append(" ")
+                    .append(operator2)
+                    .append(" ")
+                    .append(c.name());
         }
 
     }

@@ -9,6 +9,16 @@ public interface ShaderNodeGraph {
 
     List<ShaderNode> getNodes();
 
+    default ShaderNode getNode(String name) {
+        for (final var node : getNodes()) {
+            if (name.equals(node.getName())) {
+                return node;
+            }
+        }
+
+        throw new IllegalArgumentException("node not found: %s".formatted(name));
+    }
+
     Optional<ShaderNode> getFinalNode();
 
 }

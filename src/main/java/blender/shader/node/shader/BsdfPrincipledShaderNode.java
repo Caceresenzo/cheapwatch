@@ -1,8 +1,9 @@
-package blender.shader.node;
+package blender.shader.node.shader;
 
 import blender.shader.ShaderDataType;
 import blender.shader.ShaderSocket;
-import blender.shader.ShaderVariable;
+import blender.shader.code.ShaderVariable;
+import blender.shader.node.ShaderNode;
 import lombok.ToString;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -51,7 +52,7 @@ public class BsdfPrincipledShaderNode extends ShaderNode {
     );
 
     public static final List<ShaderSocket<?>> OUTPUTS = List.of(
-            new ShaderSocket<>("Shader", ShaderDataType.VALUE, null, 0)
+            new ShaderSocket<>("BSDF", ShaderDataType.SHADER, 0)
     );
 
     @Override
@@ -66,11 +67,6 @@ public class BsdfPrincipledShaderNode extends ShaderNode {
 
     @Override
     public void generateCode(StringBuilder builder, List<ShaderVariable> inputs, List<ShaderVariable> outputs) {
-        final var x = inputs.get(0);
-        final var y = inputs.get(1);
-        final var z = inputs.get(2);
-        final var result = outputs.get(0);
-
         throw new UnsupportedOperationException();
     }
 

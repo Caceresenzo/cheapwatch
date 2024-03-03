@@ -1,33 +1,35 @@
-package blender.shader.group;
+package blender.shader.node.group;
 
-import blender.shader.ShaderVariable;
+import blender.shader.code.ShaderVariable;
 import blender.shader.ShaderSocket;
 import blender.shader.node.ShaderNode;
 import blender.shader.graph.ShaderNodeGraph;
 import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+@ToString(callSuper = true)
 @Getter
-public class ShaderNodeGroup extends ShaderNode implements ShaderNodeGraph {
+public class ShaderNodeGroup implements ShaderNodeGraph {
+
+    private @Setter String name;
 
     private final List<ShaderSocket<?>> inputs = new ArrayList<>();
     private final List<ShaderSocket<?>> outputs = new ArrayList<>();
     private final List<ShaderNode> nodes = new ArrayList<>();
 
-    private final ShaderGroupOutputNode outputNode;
-    private final ShaderGroupInputNode inputNode;
+    private final GroupOutputShaderNode outputNode;
+    private final GroupInputShaderNode inputNode;
 
     public ShaderNodeGroup() {
-        addNode(outputNode = new ShaderGroupOutputNode(this));
-        addNode(inputNode = new ShaderGroupInputNode(this));
+        addNode(outputNode = new GroupOutputShaderNode(this));
+        addNode(inputNode = new GroupInputShaderNode(this));
     }
-
-    @Override
-    public void generateCode(StringBuilder builder, List<ShaderVariable> inputs, List<ShaderVariable> outputs) {}
 
     public ShaderNodeGroup addInput(ShaderSocket<?> input) {
         this.inputs.add(input);

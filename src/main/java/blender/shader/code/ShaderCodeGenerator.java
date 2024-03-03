@@ -1,7 +1,8 @@
-package blender.shader.graph;
+package blender.shader.code;
 
 import blender.shader.ShaderSocket;
-import blender.shader.ShaderVariable;
+import blender.shader.code.ShaderVariable;
+import blender.shader.graph.ShaderNodeGraph;
 import blender.shader.node.ShaderNode;
 import lombok.RequiredArgsConstructor;
 
