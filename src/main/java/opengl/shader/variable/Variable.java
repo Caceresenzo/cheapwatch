@@ -20,7 +20,7 @@ public abstract class Variable {
 			System.err.println("variable `%s` not found, available: %s".formatted(name, available));
 		}
 
-//		System.out.println("%s(name=%s, location=%d)".formatted(getClass().getSimpleName(), name, location));
+		//		System.out.println("%s(name=%s, location=%d)".formatted(getClass().getSimpleName(), name, location));
 	}
 
 	protected abstract int findLocation(ShaderProgram program);

@@ -17,45 +17,45 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public abstract class ShaderNode {
 
-    private String name;
-    private final Map<ShaderSocket<?>, Object> inputOverrides = new HashMap<>();
-    private final List<ShaderLink> links = new ArrayList<>();
-    private final List<ShaderLink> reverseLinks = new ArrayList<>();
+	private String name;
+	private final Map<ShaderSocket<?>, Object> inputOverrides = new HashMap<>();
+	private final List<ShaderLink> links = new ArrayList<>();
+	private final List<ShaderLink> reverseLinks = new ArrayList<>();
 
-    @ToString.Include
-    public abstract List<ShaderSocket<?>> getInputs();
+	@ToString.Include
+	public abstract List<ShaderSocket<?>> getInputs();
 
-    @ToString.Include
-    public abstract List<ShaderSocket<?>> getOutputs();
+	@ToString.Include
+	public abstract List<ShaderSocket<?>> getOutputs();
 
-    public abstract void generateCode(ShaderCodeWriter writer, ShaderVariables variables);
+	public abstract void generateCode(ShaderCodeWriter writer, ShaderVariables variables);
 
-    public ShaderNode addInputOverrides(ShaderSocket<?> socket, Object defaultValue) {
-        inputOverrides.put(socket, defaultValue);
+	public ShaderNode addInputOverrides(ShaderSocket<?> socket, Object defaultValue) {
+		inputOverrides.put(socket, defaultValue);
 
-        return this;
-    }
+		return this;
+	}
 
-    public ShaderNode addLink(ShaderSocket<?> fromSocket, ShaderNode toNode, ShaderSocket<?> toSocket) {
-        final var link = new ShaderLink(
-                this,
-                fromSocket,
-                toNode,
-                toSocket
-        );
+	public ShaderNode addLink(ShaderSocket<?> fromSocket, ShaderNode toNode, ShaderSocket<?> toSocket) {
+		final var link = new ShaderLink(
+			this,
+			fromSocket,
+			toNode,
+			toSocket
+		);
 
-        this.links.add(link);
-        toNode.reverseLinks.add(link);
+		this.links.add(link);
+		toNode.reverseLinks.add(link);
 
-        return this;
-    }
+		return this;
+	}
 
-    public ShaderSocket<?> getInput(int index) {
-        return getInputs().get(index);
-    }
+	public ShaderSocket<?> getInput(int index) {
+		return getInputs().get(index);
+	}
 
-    public ShaderSocket<?> getOutput(int index) {
-        return getOutputs().get(index);
-    }
+	public ShaderSocket<?> getOutput(int index) {
+		return getOutputs().get(index);
+	}
 
 }

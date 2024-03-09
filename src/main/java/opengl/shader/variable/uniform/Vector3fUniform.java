@@ -15,7 +15,7 @@ public class Vector3fUniform extends Uniform {
 	public void load(float x, float y, float z) {
 		glUniform3f(location, x, y, z);
 	}
-	
+
 	public void load(Vector3fc value) {
 		glUniform3f(location, value.x(), value.y(), value.z());
 	}

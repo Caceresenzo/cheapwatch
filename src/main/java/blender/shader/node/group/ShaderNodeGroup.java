@@ -16,50 +16,50 @@ import lombok.ToString;
 @Getter
 public class ShaderNodeGroup implements ShaderNodeGraph {
 
-    private @Setter String name;
+	private @Setter String name;
 
-    private final List<ShaderSocket<?>> inputs = new ArrayList<>();
-    private final List<ShaderSocket<?>> outputs = new ArrayList<>();
-    private final List<ShaderNode> nodes = new ArrayList<>();
+	private final List<ShaderSocket<?>> inputs = new ArrayList<>();
+	private final List<ShaderSocket<?>> outputs = new ArrayList<>();
+	private final List<ShaderNode> nodes = new ArrayList<>();
 
-    private final GroupOutputShaderNode outputNode;
-    private final GroupInputShaderNode inputNode;
+	private final GroupOutputShaderNode outputNode;
+	private final GroupInputShaderNode inputNode;
 
-    public ShaderNodeGroup() {
-        addNode(outputNode = new GroupOutputShaderNode(this));
-        addNode(inputNode = new GroupInputShaderNode(this));
-    }
+	public ShaderNodeGroup() {
+		addNode(outputNode = new GroupOutputShaderNode(this));
+		addNode(inputNode = new GroupInputShaderNode(this));
+	}
 
-    public ShaderNodeGroup addInput(ShaderSocket<?> input) {
-        this.inputs.add(input);
-        return this;
-    }
+	public ShaderNodeGroup addInput(ShaderSocket<?> input) {
+		this.inputs.add(input);
+		return this;
+	}
 
-    public ShaderNodeGroup addOutput(ShaderSocket<?> output) {
-        this.outputs.add(output);
-        return this;
-    }
+	public ShaderNodeGroup addOutput(ShaderSocket<?> output) {
+		this.outputs.add(output);
+		return this;
+	}
 
-    public ShaderNodeGroup addNode(ShaderNode node) {
-        this.nodes.add(node);
-        return this;
-    }
+	public ShaderNodeGroup addNode(ShaderNode node) {
+		this.nodes.add(node);
+		return this;
+	}
 
-    public List<ShaderSocket<?>> getInputs() {
-        return Collections.unmodifiableList(inputs);
-    }
+	public List<ShaderSocket<?>> getInputs() {
+		return Collections.unmodifiableList(inputs);
+	}
 
-    public List<ShaderSocket<?>> getOutputs() {
-        return Collections.unmodifiableList(outputs);
-    }
+	public List<ShaderSocket<?>> getOutputs() {
+		return Collections.unmodifiableList(outputs);
+	}
 
-    public List<ShaderNode> getNodes() {
-        return Collections.unmodifiableList(nodes);
-    }
+	public List<ShaderNode> getNodes() {
+		return Collections.unmodifiableList(nodes);
+	}
 
-    @Override
-    public Optional<ShaderNode> getFinalNode() {
-        return Optional.of(outputNode);
-    }
+	@Override
+	public Optional<ShaderNode> getFinalNode() {
+		return Optional.of(outputNode);
+	}
 
 }

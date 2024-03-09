@@ -1,23 +1,19 @@
 package cheapwatch.state;
 
 public enum NullGameState implements GameState {
-	
+
 	INSTANCE;
 
 	@Override
-	public void initialize() {
-	}
+	public void initialize() {}
 
 	@Override
-	public void update() {
-	}
+	public void update() {}
 
 	@Override
-	public void render() {
-	}
+	public void render() {}
 
 	@Override
-	public void cleanup() {
-	}
+	public void cleanup() {}
 
 }

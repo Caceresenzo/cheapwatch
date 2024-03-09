@@ -9,36 +9,36 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ShaderVariables {
 
-    private final java.util.List<ShaderVariable> inputs;
-    private final List<ShaderVariable> outputs;
-    private final ShaderVariableAllocator allocator;
+	private final java.util.List<ShaderVariable> inputs;
+	private final List<ShaderVariable> outputs;
+	private final ShaderVariableAllocator allocator;
 
-    public ShaderVariable getInput(int index) {
-        return inputs.get(index);
-    }
+	public ShaderVariable getInput(int index) {
+		return inputs.get(index);
+	}
 
-    public List<ShaderVariable> getInputs() {
-        return Collections.unmodifiableList(inputs);
-    }
+	public List<ShaderVariable> getInputs() {
+		return Collections.unmodifiableList(inputs);
+	}
 
-    public int getInputsCount() {
-        return inputs.size();
-    }
+	public int getInputsCount() {
+		return inputs.size();
+	}
 
-    public ShaderVariable getOutput(int index) {
-        return outputs.get(index);
-    }
+	public ShaderVariable getOutput(int index) {
+		return outputs.get(index);
+	}
 
-    public List<ShaderVariable> getOutputs() {
-        return Collections.unmodifiableList(outputs);
-    }
+	public List<ShaderVariable> getOutputs() {
+		return Collections.unmodifiableList(outputs);
+	}
 
-    public int getOutputsCount() {
-        return outputs.size();
-    }
+	public int getOutputsCount() {
+		return outputs.size();
+	}
 
-    public ShaderVariable getTemporary(String hint, ShaderDataType type) {
-        return allocator.allocateTemporary(hint, type);
-    }
+	public ShaderVariable getTemporary(String hint, ShaderDataType type) {
+		return allocator.allocateTemporary(hint, type);
+	}
 
 }

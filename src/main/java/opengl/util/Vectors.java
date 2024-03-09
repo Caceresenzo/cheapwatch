@@ -28,17 +28,17 @@ public class Vectors {
 
 		return array;
 	}
-	
+
 	public static float[] flatten2f(List<? extends Vector2fc> vectors) {
 		final var size = vectors.size();
 		final var array = new float[size * 2];
-		
+
 		for (var index = 0; index < size; ++index) {
 			final var vector = vectors.get(index);
 			array[index * 2 + 0] = vector.x();
 			array[index * 2 + 1] = vector.y();
 		}
-		
+
 		return array;
 	}
 

@@ -15,34 +15,34 @@ import lombok.ToString;
 @RequiredArgsConstructor
 public class ValueShaderNode extends ShaderNode {
 
-    public static final List<ShaderSocket<?>> OUTPUTS = List.of(
-            new ShaderSocket<>("Value", ShaderDataType.VALUE, 0)
-    );
+	public static final List<ShaderSocket<?>> OUTPUTS = List.of(
+		new ShaderSocket<>("Value", ShaderDataType.VALUE, 0)
+	);
 
-    private final float value;
+	private final float value;
 
-    public ValueShaderNode() {
-        this(0.0f);
-    }
+	public ValueShaderNode() {
+		this(0.0f);
+	}
 
-    @Override
-    public List<ShaderSocket<?>> getInputs() {
-        return Collections.emptyList();
-    }
+	@Override
+	public List<ShaderSocket<?>> getInputs() {
+		return Collections.emptyList();
+	}
 
-    @Override
-    public List<ShaderSocket<?>> getOutputs() {
-        return OUTPUTS;
-    }
+	@Override
+	public List<ShaderSocket<?>> getOutputs() {
+		return OUTPUTS;
+	}
 
-    @Override
-    public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
-        final var x = variables.getOutput(0);
+	@Override
+	public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
+		final var x = variables.getOutput(0);
 
-        writer
-                .declareAndAssign(x)
-                .value(x.type(), value)
-                .endLine();
-    }
+		writer
+			.declareAndAssign(x)
+			.value(x.type(), value)
+			.endLine();
+	}
 
 }

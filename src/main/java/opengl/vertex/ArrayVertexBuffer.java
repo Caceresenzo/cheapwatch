@@ -29,7 +29,7 @@ public class ArrayVertexBuffer extends AbstractVertexBuffer {
 		setSize(data.length, Float.BYTES);
 		return this;
 	}
-	
+
 	public ArrayVertexBuffer store(double[] data) {
 		bind();
 		glBufferData(target.getValue(), data, usage.getValue());

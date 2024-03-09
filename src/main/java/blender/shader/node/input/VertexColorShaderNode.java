@@ -15,24 +15,24 @@ import lombok.ToString;
 @RequiredArgsConstructor
 public class VertexColorShaderNode extends ShaderNode {
 
-    public static final List<ShaderSocket<?>> OUTPUTS = List.of(
-            new ShaderSocket<>("Color", ShaderDataType.RGBA, 0),
-            new ShaderSocket<>("Alpha", ShaderDataType.VALUE, 1)
-    );
+	public static final List<ShaderSocket<?>> OUTPUTS = List.of(
+		new ShaderSocket<>("Color", ShaderDataType.RGBA, 0),
+		new ShaderSocket<>("Alpha", ShaderDataType.VALUE, 1)
+	);
 
-    @Override
-    public List<ShaderSocket<?>> getInputs() {
-        return Collections.emptyList();
-    }
+	@Override
+	public List<ShaderSocket<?>> getInputs() {
+		return Collections.emptyList();
+	}
 
-    @Override
-    public List<ShaderSocket<?>> getOutputs() {
-        return OUTPUTS;
-    }
+	@Override
+	public List<ShaderSocket<?>> getOutputs() {
+		return OUTPUTS;
+	}
 
-    @Override
-    public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
+		throw new UnsupportedOperationException();
+	}
 
 }

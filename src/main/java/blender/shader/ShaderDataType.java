@@ -101,7 +101,7 @@ public abstract class ShaderDataType<T> {
 	private final String codeType;
 	private final T defaultValue;
 
-    public abstract String render(T value);
+	public abstract String render(T value);
 
 	public abstract T parse(JsonNode valueNode);
 

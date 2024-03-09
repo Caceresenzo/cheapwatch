@@ -7,18 +7,18 @@ import blender.shader.node.ShaderNode;
 
 public interface ShaderNodeGraph {
 
-    List<ShaderNode> getNodes();
+	List<ShaderNode> getNodes();
 
-    default ShaderNode getNode(String name) {
-        for (final var node : getNodes()) {
-            if (name.equals(node.getName())) {
-                return node;
-            }
-        }
+	default ShaderNode getNode(String name) {
+		for (final var node : getNodes()) {
+			if (name.equals(node.getName())) {
+				return node;
+			}
+		}
 
-        throw new IllegalArgumentException("node not found: %s".formatted(name));
-    }
+		throw new IllegalArgumentException("node not found: %s".formatted(name));
+	}
 
-    Optional<ShaderNode> getFinalNode();
+	Optional<ShaderNode> getFinalNode();
 
 }

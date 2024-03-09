@@ -12,36 +12,36 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class GroupInputShaderNode extends ShaderNode {
 
-    @ToString.Exclude
-    private final ShaderNodeGroup group;
+	@ToString.Exclude
+	private final ShaderNodeGroup group;
 
-    GroupInputShaderNode(ShaderNodeGroup group) {
-        this.group = group;
+	GroupInputShaderNode(ShaderNodeGroup group) {
+		this.group = group;
 
-        setName("Group Input");
-    }
+		setName("Group Input");
+	}
 
-    @Override
-    public List<ShaderSocket<?>> getInputs() {
-        return Collections.emptyList();
-    }
+	@Override
+	public List<ShaderSocket<?>> getInputs() {
+		return Collections.emptyList();
+	}
 
-    @Override
-    public List<ShaderSocket<?>> getOutputs() {
-        return group.getInputs();
-    }
+	@Override
+	public List<ShaderSocket<?>> getOutputs() {
+		return group.getInputs();
+	}
 
-    @Override
-    public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
-        writer.comment("inputs:").endLine();
+	@Override
+	public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
+		writer.comment("inputs:").endLine();
 
-        final var size = variables.getOutputsCount();
-        for (int index = 0; index < size; index++) {
-            final var socket = getOutputs().get(index);
-            final var variable = variables.getOutput(index);
+		final var size = variables.getOutputsCount();
+		for (int index = 0; index < size; index++) {
+			final var socket = getOutputs().get(index);
+			final var variable = variables.getOutput(index);
 
-            writer.comment("%s = %s".formatted(socket.name(), variable.name())).endLine();
-        }
-    }
+			writer.comment("%s = %s".formatted(socket.name(), variable.name())).endLine();
+		}
+	}
 
 }

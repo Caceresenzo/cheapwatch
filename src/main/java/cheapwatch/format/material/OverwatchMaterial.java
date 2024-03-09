@@ -7,15 +7,15 @@ public record OverwatchMaterial(
 	List<OverwatchTexture> textures,
 	List<OverwatchStatic> statics
 ) {
-	
+
 	public OverwatchTexture getTexture(long id) {
 		for (final var texture : textures) {
 			if (texture.id() == id) {
 				return texture;
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 }

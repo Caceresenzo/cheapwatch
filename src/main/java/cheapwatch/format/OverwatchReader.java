@@ -76,7 +76,7 @@ public abstract class OverwatchReader<T> {
 		if ("null".equals(string)) {
 			return null;
 		}
-		
+
 		return string;
 	}
 
@@ -144,7 +144,7 @@ public abstract class OverwatchReader<T> {
 	public ByteList readBytes(int length) {
 		final var array = new byte[length];
 		buffer.get(array);
-		
+
 		return ByteArrayList.wrap(array);
 	}
 

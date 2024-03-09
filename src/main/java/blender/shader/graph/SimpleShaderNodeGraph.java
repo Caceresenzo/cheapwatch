@@ -10,20 +10,20 @@ import lombok.Getter;
 @Getter
 public class SimpleShaderNodeGraph implements ShaderNodeGraph {
 
-    private final List<ShaderNode> nodes = new ArrayList<>();
+	private final List<ShaderNode> nodes = new ArrayList<>();
 
-    public SimpleShaderNodeGraph addNode(ShaderNode node) {
-        this.nodes.add(node);
-        return this;
-    }
+	public SimpleShaderNodeGraph addNode(ShaderNode node) {
+		this.nodes.add(node);
+		return this;
+	}
 
-    @Override
-    public Optional<ShaderNode> getFinalNode() {
-        if (nodes.isEmpty()) {
-            return Optional.empty();
-        }
+	@Override
+	public Optional<ShaderNode> getFinalNode() {
+		if (nodes.isEmpty()) {
+			return Optional.empty();
+		}
 
-        return Optional.of(nodes.getLast());
-    }
+		return Optional.of(nodes.getLast());
+	}
 
 }

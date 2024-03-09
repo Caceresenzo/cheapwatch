@@ -12,28 +12,28 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class ShaderAddShaderNode extends ShaderNode {
 
-    public static final List<ShaderSocket<?>> INPUTS = List.of(
-            new ShaderSocket<>("Shader", ShaderDataType.SHADER, 0),
-            new ShaderSocket<>("Shader", "Shader_001", ShaderDataType.SHADER, 1)
-    );
+	public static final List<ShaderSocket<?>> INPUTS = List.of(
+		new ShaderSocket<>("Shader", ShaderDataType.SHADER, 0),
+		new ShaderSocket<>("Shader", "Shader_001", ShaderDataType.SHADER, 1)
+	);
 
-    public static final List<ShaderSocket<?>> OUTPUTS = List.of(
-            new ShaderSocket<>("Shader", ShaderDataType.SHADER, 0)
-    );
+	public static final List<ShaderSocket<?>> OUTPUTS = List.of(
+		new ShaderSocket<>("Shader", ShaderDataType.SHADER, 0)
+	);
 
-    @Override
-    public List<ShaderSocket<?>> getInputs() {
-        return INPUTS;
-    }
+	@Override
+	public List<ShaderSocket<?>> getInputs() {
+		return INPUTS;
+	}
 
-    @Override
-    public List<ShaderSocket<?>> getOutputs() {
-        return OUTPUTS;
-    }
+	@Override
+	public List<ShaderSocket<?>> getOutputs() {
+		return OUTPUTS;
+	}
 
-    @Override
-    public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
+		throw new UnsupportedOperationException();
+	}
 
 }

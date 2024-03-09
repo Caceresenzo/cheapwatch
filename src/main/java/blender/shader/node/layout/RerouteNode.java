@@ -13,32 +13,32 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class RerouteNode extends ShaderNode {
 
-    private final List<ShaderSocket<?>> inputs = new ArrayList<>();
-    private final List<ShaderSocket<?>> outputs = new ArrayList<>();
+	private final List<ShaderSocket<?>> inputs = new ArrayList<>();
+	private final List<ShaderSocket<?>> outputs = new ArrayList<>();
 
-    @Override
-    public List<ShaderSocket<?>> getInputs() {
-        return Collections.unmodifiableList(inputs);
-    }
+	@Override
+	public List<ShaderSocket<?>> getInputs() {
+		return Collections.unmodifiableList(inputs);
+	}
 
-    @Override
-    public List<ShaderSocket<?>> getOutputs() {
-        return Collections.unmodifiableList(outputs);
-    }
+	@Override
+	public List<ShaderSocket<?>> getOutputs() {
+		return Collections.unmodifiableList(outputs);
+	}
 
-    @Override
-    public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
-        writer.comment("reroute");
-    }
+	@Override
+	public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
+		writer.comment("reroute");
+	}
 
-    public RerouteNode addInput(ShaderSocket<?> socket) {
-        this.inputs.add(socket);
-        return this;
-    }
+	public RerouteNode addInput(ShaderSocket<?> socket) {
+		this.inputs.add(socket);
+		return this;
+	}
 
-    public RerouteNode addOutput(ShaderSocket<?> socket) {
-        this.outputs.add(socket);
-        return this;
-    }
+	public RerouteNode addOutput(ShaderSocket<?> socket) {
+		this.outputs.add(socket);
+		return this;
+	}
 
 }
