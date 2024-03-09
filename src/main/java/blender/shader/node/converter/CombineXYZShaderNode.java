@@ -1,13 +1,15 @@
 package blender.shader.node.converter;
 
-import blender.shader.ShaderDataType;
-import blender.shader.code.ShaderVariable;
-import blender.shader.ShaderSocket;
-import blender.shader.node.ShaderNode;
-import lombok.ToString;
+import java.util.List;
+
 import org.joml.Vector3f;
 
-import java.util.List;
+import blender.shader.ShaderDataType;
+import blender.shader.ShaderSocket;
+import blender.shader.code.ShaderCodeWriter;
+import blender.shader.code.ShaderVariables;
+import blender.shader.node.ShaderNode;
+import lombok.ToString;
 
 @ToString(callSuper = true)
 public class CombineXYZShaderNode extends ShaderNode {
@@ -33,23 +35,16 @@ public class CombineXYZShaderNode extends ShaderNode {
     }
 
     @Override
-    public void generateCode(StringBuilder builder, List<ShaderVariable> inputs, List<ShaderVariable> outputs) {
-        final var x = inputs.get(0);
-        final var y = inputs.get(1);
-        final var z = inputs.get(2);
-        final var result = outputs.get(0);
+    public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
+        final var x = variables.getInput(0);
+        final var y = variables.getInput(1);
+        final var z = variables.getInput(2);
+        final var result = variables.getOutput(0);
 
-        builder
-                .append(result.type().getCodeType())
-                .append(" ")
-                .append(result.name())
-                .append(" = vec3(")
-                .append(x.name())
-                .append(", ")
-                .append(y.name())
-                .append(", ")
-                .append(z.name())
-                .append(");");
+        writer
+                .declareAndAssign(result)
+                .value("vec3", x.name(), y.name(), z.name())
+                .endLine();
     }
 
 }

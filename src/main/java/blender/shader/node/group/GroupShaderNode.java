@@ -1,20 +1,23 @@
 package blender.shader.node.group;
 
+import java.util.Collections;
+import java.util.List;
+
 import blender.shader.ShaderSocket;
-import blender.shader.code.ShaderVariable;
+import blender.shader.code.ShaderCodeWriter;
+import blender.shader.code.ShaderVariables;
 import blender.shader.library.ShaderLibrary;
 import blender.shader.node.ShaderNode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
-import java.util.Collections;
-import java.util.List;
-
+@ToString(callSuper = true)
 @RequiredArgsConstructor
 public class GroupShaderNode extends ShaderNode {
 
     private final String treeName;
-    private @Getter ShaderNodeGroup target;
+    private @ToString.Exclude @Getter ShaderNodeGroup target;
 
     @Override
     public List<ShaderSocket<?>> getInputs() {
@@ -35,8 +38,8 @@ public class GroupShaderNode extends ShaderNode {
     }
 
     @Override
-    public void generateCode(StringBuilder builder, List<ShaderVariable> inputs, List<ShaderVariable> outputs) {
-        builder.append("// treeName:").append(treeName);
+    public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
+        writer.comment("treeName: %s".formatted(treeName));
     }
 
     public void link(ShaderLibrary library) {

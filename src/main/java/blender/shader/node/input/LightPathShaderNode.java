@@ -1,14 +1,14 @@
 package blender.shader.node.input;
 
-import blender.shader.ShaderDataType;
-import blender.shader.ShaderSocket;
-import blender.shader.code.ShaderVariable;
-import blender.shader.node.ShaderNode;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
-
 import java.util.Collections;
 import java.util.List;
+
+import blender.shader.ShaderDataType;
+import blender.shader.ShaderSocket;
+import blender.shader.code.ShaderCodeWriter;
+import blender.shader.code.ShaderVariables;
+import blender.shader.node.ShaderNode;
+import lombok.ToString;
 
 @ToString(callSuper = true)
 public class LightPathShaderNode extends ShaderNode {
@@ -40,15 +40,12 @@ public class LightPathShaderNode extends ShaderNode {
     }
 
     @Override
-    public void generateCode(StringBuilder builder, List<ShaderVariable> inputs, List<ShaderVariable> outputs) {
-        for (final var output : outputs) {
-            builder
-                    .append(output.type().getCodeType())
-                    .append(" ")
-                    .append(output.name())
-                    .append(" = ")
-                    .append(0.0f)
-                    .append(";");
+    public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
+        for (final var output : variables.getOutputs()) {
+            writer
+                    .declareAndAssign(output)
+                    .value(ShaderDataType.VALUE, 0.0f)
+                    .endLine();
         }
     }
 

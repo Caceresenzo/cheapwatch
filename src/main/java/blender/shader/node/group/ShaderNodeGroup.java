@@ -1,17 +1,16 @@
 package blender.shader.node.group;
 
-import blender.shader.code.ShaderVariable;
-import blender.shader.ShaderSocket;
-import blender.shader.node.ShaderNode;
-import blender.shader.graph.ShaderNodeGraph;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
+import blender.shader.ShaderSocket;
+import blender.shader.graph.ShaderNodeGraph;
+import blender.shader.node.ShaderNode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 @ToString(callSuper = true)
 @Getter

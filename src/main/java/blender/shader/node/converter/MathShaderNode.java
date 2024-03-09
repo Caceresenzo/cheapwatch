@@ -1,13 +1,14 @@
 package blender.shader.node.converter;
 
+import java.util.List;
+
 import blender.shader.ShaderDataType;
 import blender.shader.ShaderSocket;
-import blender.shader.code.ShaderVariable;
+import blender.shader.code.ShaderCodeWriter;
+import blender.shader.code.ShaderVariables;
 import blender.shader.node.ShaderNode;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-
-import java.util.List;
 
 @ToString(callSuper = true)
 @RequiredArgsConstructor
@@ -37,57 +38,51 @@ public class MathShaderNode extends ShaderNode {
     }
 
     @Override
-    public void generateCode(StringBuilder builder, List<ShaderVariable> inputs, List<ShaderVariable> outputs) {
-        final var result = outputs.get(0);
+    public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
+        final var result = variables.getOutput(0);
 
-        builder
-                .append(result.type().getCodeType())
-                .append(" ")
-                .append(result.name())
-                .append(" = ");
+        writer
+                .declareAndAssign(result);
 
         if (clamp) {
-            builder
-                    .append("clamp(");
+            writer.prepareCall("clamp");
         }
 
-        operation.generateCode(builder, inputs);
+        operation.generateCode(writer, variables);
 
         if (clamp) {
-            builder
-                    .append(", 0.0f, 1.0f)");
+            writer.endCall("0.0", "1.0");
         }
 
-        builder
-                .append(";");
+        writer.endLine();
     }
 
     public enum Operation {
         ADD {
             @Override
-            public void generateCode(StringBuilder builder, List<ShaderVariable> inputs) {
-                generateBinaryCode(builder, inputs, "+");
+            public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
+                writer.useBinaryOperator("+", variables.getInput(0), variables.getInput(1));
             }
 
         },
         SUBTRACT {
             @Override
-            public void generateCode(StringBuilder builder, List<ShaderVariable> inputs) {
-                generateBinaryCode(builder, inputs, "-");
+            public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
+                writer.useBinaryOperator("-", variables.getInput(0), variables.getInput(1));
             }
 
         },
         MULTIPLY {
             @Override
-            public void generateCode(StringBuilder builder, List<ShaderVariable> inputs) {
-                generateBinaryCode(builder, inputs, "*");
+            public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
+                writer.useBinaryOperator("*", variables.getInput(0), variables.getInput(1));
             }
 
         },
         DIVIDE {
             @Override
-            public void generateCode(StringBuilder builder, List<ShaderVariable> inputs) {
-                generateBinaryCode(builder, inputs, "/");
+            public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
+                writer.useBinaryOperator("/", variables.getInput(0), variables.getInput(1));
             }
 
         },
@@ -97,61 +92,61 @@ public class MathShaderNode extends ShaderNode {
         //		TANGENT,
         ARCSINE {
             @Override
-            public void generateCode(StringBuilder builder, List<ShaderVariable> inputs) {
-                generateBiFunctionCallCode(builder, inputs, "asin");
+            public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
+                writer.useFunctionCall("asin", variables.getInput(0));
             }
 
         },
         ARCCOSINE {
             @Override
-            public void generateCode(StringBuilder builder, List<ShaderVariable> inputs) {
-                generateBiFunctionCallCode(builder, inputs, "acos");
+            public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
+                writer.useFunctionCall("acos", variables.getInput(0));
             }
 
         },
         //		ARCTANGENT,
         POWER {
             @Override
-            public void generateCode(StringBuilder builder, List<ShaderVariable> inputs) {
-                generateBiFunctionCallCode(builder, inputs, "pow");
+            public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
+                writer.useBiFunctionCall("pow", variables.getInput(0), variables.getInput(1));
             }
 
         },
         //		LOGARITHM,
         MINIMUM {
             @Override
-            public void generateCode(StringBuilder builder, List<ShaderVariable> inputs) {
-                generateBiFunctionCallCode(builder, inputs, "min");
+            public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
+                writer.useBiFunctionCall("min", variables.getInput(0), variables.getInput(1));
             }
 
         },
         MAXIMUM {
             @Override
-            public void generateCode(StringBuilder builder, List<ShaderVariable> inputs) {
-                generateBiFunctionCallCode(builder, inputs, "max");
+            public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
+                writer.useBiFunctionCall("max", variables.getInput(0), variables.getInput(1));
             }
 
         },
         //		ROUND,
         LESS_THAN {
             @Override
-            public void generateCode(StringBuilder builder, List<ShaderVariable> inputs) {
-                generateComparisonCode(builder, inputs, "<");
+            public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
+                writer.useComparison("<", variables.getInput(0), variables.getInput(1));
             }
 
         },
         GREATER_THAN {
             @Override
-            public void generateCode(StringBuilder builder, List<ShaderVariable> inputs) {
-                generateComparisonCode(builder, inputs, ">");
+            public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
+                writer.useComparison(">", variables.getInput(0), variables.getInput(1));
             }
 
         },
         //		MODULO,
         ABSOLUTE {
             @Override
-            public void generateCode(StringBuilder builder, List<ShaderVariable> inputs) {
-                generateFunctionCallCode(builder, inputs, "abs");
+            public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
+                writer.useFunctionCall("abs", variables.getInput(0));
             }
 
         },
@@ -175,8 +170,8 @@ public class MathShaderNode extends ShaderNode {
         //		COMPARE,
         MULTIPLY_ADD {
             @Override
-            public void generateCode(StringBuilder builder, List<ShaderVariable> inputs) {
-                generateTrinaryCode(builder, inputs, "*", "+");
+            public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
+                writer.useTrinaryOperator("*", "+", variables.getInput(0), variables.getInput(1), variables.getInput(2));
             }
 
         };
@@ -185,72 +180,7 @@ public class MathShaderNode extends ShaderNode {
         //		SMOOTH_MAX,
         //		FLOORED_MODULO,
 
-        public abstract void generateCode(StringBuilder builder, List<ShaderVariable> inputs);
-
-        private static void generateFunctionCallCode(StringBuilder builder, List<ShaderVariable> inputs, String functionName) {
-            final var a = inputs.get(0);
-
-            builder
-                    .append(functionName)
-                    .append("(")
-                    .append(a.name())
-                    .append(")");
-        }
-
-        private static void generateBiFunctionCallCode(StringBuilder builder, List<ShaderVariable> inputs, String functionName) {
-            final var a = inputs.get(0);
-            final var b = inputs.get(1);
-
-            builder
-                    .append(functionName)
-                    .append("(")
-                    .append(a.name())
-                    .append(", ")
-                    .append(b.name())
-                    .append(")");
-        }
-
-        private static void generateBinaryCode(StringBuilder builder, List<ShaderVariable> inputs, String operator) {
-            final var a = inputs.get(0);
-            final var b = inputs.get(1);
-
-            builder
-                    .append(a.name())
-                    .append(" ")
-                    .append(operator)
-                    .append(" ")
-                    .append(b.name());
-        }
-
-        private static void generateTrinaryCode(StringBuilder builder, List<ShaderVariable> inputs, String operator1, String operator2) {
-            final var a = inputs.get(0);
-            final var b = inputs.get(1);
-            final var c = inputs.get(2);
-
-            builder
-                    .append(a.name())
-                    .append(" ")
-                    .append(operator1)
-                    .append(" ")
-                    .append(b.name())
-                    .append(" ")
-                    .append(operator2)
-                    .append(" ")
-                    .append(c.name());
-        }
-
-        private static void generateComparisonCode(StringBuilder builder, List<ShaderVariable> inputs, String operator) {
-            final var a = inputs.get(0);
-            final var b = inputs.get(1);
-
-            builder
-                    .append(a.name())
-                    .append(" ")
-                    .append(operator)
-                    .append(" ")
-                    .append(b.name())
-                    .append(" ? 1.0f : 0.0f");
-        }
+        public abstract void generateCode(ShaderCodeWriter writer, ShaderVariables variables);
 
     }
 

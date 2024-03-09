@@ -1,8 +1,8 @@
 package blender.shader;
 
-import blender.shader.node.ShaderNode;
-
 import java.util.UUID;
+
+import blender.shader.node.ShaderNode;
 
 public record ShaderLink(
         UUID id,

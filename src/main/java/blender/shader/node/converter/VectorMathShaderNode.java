@@ -1,214 +1,186 @@
 package blender.shader.node.converter;
 
+import java.util.List;
+
+import org.joml.Vector3f;
+
 import blender.shader.ShaderDataType;
 import blender.shader.ShaderSocket;
-import blender.shader.code.ShaderVariable;
+import blender.shader.code.ShaderCodeWriter;
+import blender.shader.code.ShaderVariables;
 import blender.shader.node.ShaderNode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-import org.joml.Vector3f;
-
-import java.util.List;
 
 @ToString(callSuper = true)
 @RequiredArgsConstructor
 public class VectorMathShaderNode extends ShaderNode {
 
-    public static final List<ShaderSocket<?>> INPUTS = List.of(
-            new ShaderSocket<>("Vector", ShaderDataType.VECTOR, new Vector3f(), 0),
-            new ShaderSocket<>("Vector", "Vector_001", ShaderDataType.VECTOR, new Vector3f(), 1),
-            new ShaderSocket<>("Vector", "Vector_002", ShaderDataType.VECTOR, new Vector3f(), 2),
-            new ShaderSocket<>("Scale", ShaderDataType.VALUE, 1.0f, 3)
-    );
+	public static final List<ShaderSocket<?>> INPUTS = List.of(
+		new ShaderSocket<>("Vector", ShaderDataType.VECTOR, new Vector3f(), 0),
+		new ShaderSocket<>("Vector", "Vector_001", ShaderDataType.VECTOR, new Vector3f(), 1),
+		new ShaderSocket<>("Vector", "Vector_002", ShaderDataType.VECTOR, new Vector3f(), 2),
+		new ShaderSocket<>("Scale", ShaderDataType.VALUE, 1.0f, 3)
+	);
 
-    public static final List<ShaderSocket<?>> OUTPUTS = List.of(
-            new ShaderSocket<>("Vector", ShaderDataType.VECTOR, new Vector3f(), 0),
-            new ShaderSocket<>("Value", ShaderDataType.VALUE, 0.0f, 1)
-    );
+	public static final List<ShaderSocket<?>> OUTPUTS = List.of(
+		new ShaderSocket<>("Vector", ShaderDataType.VECTOR, new Vector3f(), 0),
+		new ShaderSocket<>("Value", ShaderDataType.VALUE, 0.0f, 1)
+	);
 
-    private final Operation operation;
+	private final Operation operation;
 
-    @Override
-    public List<ShaderSocket<?>> getInputs() {
-        return INPUTS;
-    }
+	@Override
+	public List<ShaderSocket<?>> getInputs() {
+		return INPUTS;
+	}
 
-    @Override
-    public List<ShaderSocket<?>> getOutputs() {
-        return OUTPUTS;
-    }
+	@Override
+	public List<ShaderSocket<?>> getOutputs() {
+		return OUTPUTS;
+	}
 
-    @Override
-    public void generateCode(StringBuilder builder, List<ShaderVariable> inputs, List<ShaderVariable> outputs) {
-        var index = 0;
-        if (!operation.isReturnsVector()) {
-            index = 1;
-        }
+	@Override
+	public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
+		var index = 0;
+		if (!operation.isReturnsVector()) {
+			index = 1;
+		}
 
-        final var result = outputs.get(index);
+		final var result = variables.getOutput(index);
 
-        builder
-                .append(result.type().getCodeType())
-                .append(" ")
-                .append(result.name())
-                .append(" = ");
+		writer.declareAndAssign(result);
 
-        operation.generateCode(builder, inputs);
+		operation.generateCode(writer, variables);
 
-        builder
-                .append(";");
-    }
+		writer.endLine();
+	}
 
-    @RequiredArgsConstructor
-    @Getter
-    public enum Operation {
-        ADD(true) {
-            @Override
-            public void generateCode(StringBuilder builder, List<ShaderVariable> inputs) {
-                generateBinaryCode(builder, inputs, "+");
-            }
+	@RequiredArgsConstructor
+	@Getter
+	public enum Operation {
 
-        },
-        SUBTRACT(true) {
-            @Override
-            public void generateCode(StringBuilder builder, List<ShaderVariable> inputs) {
-                generateBinaryCode(builder, inputs, "-");
-            }
+		ADD(true) {
 
-        },
-        MULTIPLY(true) {
-            @Override
-            public void generateCode(StringBuilder builder, List<ShaderVariable> inputs) {
-                generateBinaryCode(builder, inputs, "*");
-            }
+			@Override
+			public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
+				writer.useBinaryOperator("+", variables.getInput(0), variables.getInput(1));
+			}
 
-        },
-        DIVIDE(true) {
-            @Override
-            public void generateCode(StringBuilder builder, List<ShaderVariable> inputs) {
-                generateBinaryCode(builder, inputs, "/");
-            }
+		},
+		SUBTRACT(true) {
 
-        },
-        //
-        CROSS_PRODUCT(true) {
-            @Override
-            public void generateCode(StringBuilder builder, List<ShaderVariable> inputs) {
-                generateFunctionCallCode(builder, inputs, "cross");
-            }
+			@Override
+			public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
+				writer.useBinaryOperator("-", variables.getInput(0), variables.getInput(1));
+			}
 
-        },
-//        PROJECT,
-//        REFLECT,
-        DOT_PRODUCT(false) {
-            @Override
-            public void generateCode(StringBuilder builder, List<ShaderVariable> inputs) {
-                generateFunctionCallCode(builder, inputs, "dot");
-            }
+		},
+		MULTIPLY(true) {
 
-        },
-        //
-//        DISTANCE,
-        LENGTH(false) {
-            @Override
-            public void generateCode(StringBuilder builder, List<ShaderVariable> inputs) {
-                generateFunctionCallCode(builder, inputs, "length");
-            }
+			@Override
+			public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
+				writer.useBinaryOperator("*", variables.getInput(0), variables.getInput(1));
+			}
 
-        },
-//        SCALE,
-        NORMALIZE(true) {
-            @Override
-            public void generateCode(StringBuilder builder, List<ShaderVariable> inputs) {
-                generateFunctionCallCode(builder, inputs, "normalize");
-            }
+		},
+		DIVIDE(true) {
 
-        },
-        //
-//        SNAP,
-//        FLOOR,
-//        CEIL,
-//        MODULO,
-//        FRACTION,
-//        ABSOLUTE,
-//        MINIMUM,
-//        MAXIMUM,
-//        WRAP,
-        SINE(true) {
-            @Override
-            public void generateCode(StringBuilder builder, List<ShaderVariable> inputs) {
-                generateFunctionCallCode(builder, inputs, "sin");
-            }
+			@Override
+			public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
+				writer.useBinaryOperator("/", variables.getInput(0), variables.getInput(1));
+			}
 
-        },
-        COSINE(true) {
-            @Override
-            public void generateCode(StringBuilder builder, List<ShaderVariable> inputs) {
-                generateFunctionCallCode(builder, inputs, "cos");
-            }
+		},
+		//
+		CROSS_PRODUCT(true) {
 
-        },
-//        TANGENT,
-//        REFRACT,
-//        FACEFORWARD,
-        MULTIPLY_ADD(true) {
-            @Override
-            public void generateCode(StringBuilder builder, List<ShaderVariable> inputs) {
-                generateTrinaryCode(builder, inputs, "*", "+");
-            }
+			@Override
+			public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
+				writer.useBiFunctionCall("cross", variables.getInput(0), variables.getInput(1));
+			}
 
-        },
-        _END(false) {
-            @Override
-            public void generateCode(StringBuilder builder, List<ShaderVariable> inputs) {
-                throw new UnsupportedOperationException();
-            }
+		},
+		//        PROJECT,
+		//        REFLECT,
+		DOT_PRODUCT(false) {
 
-        };
+			@Override
+			public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
+				writer.useBiFunctionCall("dot", variables.getInput(0), variables.getInput(1));
+			}
 
-        private final boolean returnsVector;
+		},
+		//
+		//        DISTANCE,
+		LENGTH(false) {
 
-        public abstract void generateCode(StringBuilder builder, List<ShaderVariable> inputs);
+			@Override
+			public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
+				writer.useFunctionCall("length", variables.getInput(0));
+			}
 
-        private static void generateFunctionCallCode(StringBuilder builder, List<ShaderVariable> inputs, String functionName) {
-            final var a = inputs.get(0);
+		},
+		//        SCALE,
+		NORMALIZE(true) {
 
-            builder
-                    .append("abs(")
-                    .append(a.name())
-                    .append(")");
-        }
+			@Override
+			public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
+				writer.useFunctionCall("normalize", variables.getInput(0));
+			}
 
-        private static void generateBinaryCode(StringBuilder builder, List<ShaderVariable> inputs, String operator) {
-            final var a = inputs.get(0);
-            final var b = inputs.get(1);
+		},
+		//
+		//        SNAP,
+		//        FLOOR,
+		//        CEIL,
+		//        MODULO,
+		//        FRACTION,
+		//        ABSOLUTE,
+		//        MINIMUM,
+		//        MAXIMUM,
+		//        WRAP,
+		SINE(true) {
 
-            builder
-                    .append(a.name())
-                    .append(" ")
-                    .append(operator)
-                    .append(" ")
-                    .append(b.name());
-        }
+			@Override
+			public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
+				writer.useFunctionCall("sin", variables.getInput(0));
+			}
 
-        private static void generateTrinaryCode(StringBuilder builder, List<ShaderVariable> inputs, String operator1, String operator2) {
-            final var a = inputs.get(0);
-            final var b = inputs.get(1);
-            final var c = inputs.get(2);
+		},
+		COSINE(true) {
 
-            builder
-                    .append(a.name())
-                    .append(" ")
-                    .append(operator1)
-                    .append(" ")
-                    .append(b.name())
-                    .append(" ")
-                    .append(operator2)
-                    .append(" ")
-                    .append(c.name());
-        }
+			@Override
+			public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
+				writer.useFunctionCall("cos", variables.getInput(0));
+			}
 
-    }
+		},
+		//        TANGENT,
+		//        REFRACT,
+		//        FACEFORWARD,
+		MULTIPLY_ADD(true) {
+
+			@Override
+			public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
+				writer.useTrinaryOperator("*", "+", variables.getInput(0), variables.getInput(1), variables.getInput(2));
+			}
+
+		},
+		_END(false) {
+
+			@Override
+			public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
+				throw new UnsupportedOperationException();
+			}
+
+		};
+
+		private final boolean returnsVector;
+
+		public abstract void generateCode(ShaderCodeWriter writer, ShaderVariables variables);
+
+	}
 
 }

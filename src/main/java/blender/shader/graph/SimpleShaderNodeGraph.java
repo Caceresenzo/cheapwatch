@@ -1,11 +1,11 @@
 package blender.shader.graph;
 
-import blender.shader.node.ShaderNode;
-import lombok.Getter;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import blender.shader.node.ShaderNode;
+import lombok.Getter;
 
 @Getter
 public class SimpleShaderNodeGraph implements ShaderNodeGraph {

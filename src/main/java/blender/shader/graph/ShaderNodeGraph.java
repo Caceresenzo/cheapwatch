@@ -1,9 +1,9 @@
 package blender.shader.graph;
 
-import blender.shader.node.ShaderNode;
-
 import java.util.List;
 import java.util.Optional;
+
+import blender.shader.node.ShaderNode;
 
 public interface ShaderNodeGraph {
 

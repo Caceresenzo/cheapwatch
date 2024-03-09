@@ -1,14 +1,15 @@
 package blender.shader.node.input;
 
+import java.util.Collections;
+import java.util.List;
+
 import blender.shader.ShaderDataType;
 import blender.shader.ShaderSocket;
-import blender.shader.code.ShaderVariable;
+import blender.shader.code.ShaderCodeWriter;
+import blender.shader.code.ShaderVariables;
 import blender.shader.node.ShaderNode;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-
-import java.util.Collections;
-import java.util.List;
 
 @ToString(callSuper = true)
 @RequiredArgsConstructor
@@ -30,25 +31,8 @@ public class VertexColorShaderNode extends ShaderNode {
     }
 
     @Override
-    public void generateCode(StringBuilder builder, List<ShaderVariable> inputs, List<ShaderVariable> outputs) {
-        final var color = outputs.get(0);
-        final var alpha = outputs.get(1);
-
-        builder
-                .append(color.type().getCodeType())
-                .append(" ")
-                .append(color.name())
-                .append(" = ")
-                .append("in_COLOR")
-                .append(";");
-
-        builder
-                .append(alpha.type().getCodeType())
-                .append(" ")
-                .append(alpha.name())
-                .append(" = ")
-                .append("in_ALPHA")
-                .append(";");
+    public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
+        throw new UnsupportedOperationException();
     }
 
 }

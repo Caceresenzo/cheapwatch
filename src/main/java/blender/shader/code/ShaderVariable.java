@@ -3,18 +3,19 @@ package blender.shader.code;
 import blender.shader.ShaderDataType;
 import blender.shader.ShaderSocket;
 
-public record ShaderVariable(
+public record ShaderVariable<T>(
         String name,
-        ShaderSocket port,
-        boolean used
+        ShaderDataType<T> type,
+        ShaderSocket<T> socket,
+        boolean linked
 ) {
 
-    public ShaderDataType type() {
-        return port.type();
+    public ShaderVariable(String name, ShaderSocket<T> socket, boolean linked) {
+        this(name, socket.type(), socket, linked);
     }
 
-    public boolean unused() {
-        return !used;
+    public ShaderVariable(String name, ShaderDataType<T> type) {
+        this(name, type, null, true);
     }
 
 }

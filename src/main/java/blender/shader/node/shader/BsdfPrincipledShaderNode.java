@@ -1,14 +1,16 @@
 package blender.shader.node.shader;
 
-import blender.shader.ShaderDataType;
-import blender.shader.ShaderSocket;
-import blender.shader.code.ShaderVariable;
-import blender.shader.node.ShaderNode;
-import lombok.ToString;
+import java.util.List;
+
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
-import java.util.List;
+import blender.shader.ShaderDataType;
+import blender.shader.ShaderSocket;
+import blender.shader.code.ShaderCodeWriter;
+import blender.shader.code.ShaderVariables;
+import blender.shader.node.ShaderNode;
+import lombok.ToString;
 
 @ToString(callSuper = true)
 public class BsdfPrincipledShaderNode extends ShaderNode {
@@ -66,7 +68,7 @@ public class BsdfPrincipledShaderNode extends ShaderNode {
     }
 
     @Override
-    public void generateCode(StringBuilder builder, List<ShaderVariable> inputs, List<ShaderVariable> outputs) {
+    public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
         throw new UnsupportedOperationException();
     }
 

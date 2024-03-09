@@ -1,73 +1,62 @@
 package blender.shader.node.converter;
 
-import blender.shader.ShaderDataType;
-import blender.shader.ShaderSocket;
-import blender.shader.code.ShaderVariable;
-import blender.shader.node.ShaderNode;
-import lombok.ToString;
+import java.util.List;
+
 import org.joml.Vector3f;
 
-import java.util.List;
+import blender.shader.ShaderDataType;
+import blender.shader.ShaderSocket;
+import blender.shader.code.ShaderCodeWriter;
+import blender.shader.code.ShaderVariable;
+import blender.shader.code.ShaderVariables;
+import blender.shader.node.ShaderNode;
+import lombok.ToString;
 
 @ToString(callSuper = true)
 public class SeparateXYZShaderNode extends ShaderNode {
 
-    public static final List<ShaderSocket<?>> INPUTS = List.of(
-            new ShaderSocket<>("Vector", ShaderDataType.VECTOR, new Vector3f(), 0)
-    );
+	public static final List<ShaderSocket<?>> INPUTS = List.of(
+		new ShaderSocket<>("Vector", ShaderDataType.VECTOR, new Vector3f(), 0)
+	);
 
-    public static final List<ShaderSocket<?>> OUTPUTS = List.of(
-            new ShaderSocket<>("X", ShaderDataType.VALUE, 0.0f, 0),
-            new ShaderSocket<>("Y", ShaderDataType.VALUE, 0.0f, 1),
-            new ShaderSocket<>("Z", ShaderDataType.VALUE, 0.0f, 2)
-    );
+	public static final List<ShaderSocket<?>> OUTPUTS = List.of(
+		new ShaderSocket<>("X", ShaderDataType.VALUE, 0.0f, 0),
+		new ShaderSocket<>("Y", ShaderDataType.VALUE, 0.0f, 1),
+		new ShaderSocket<>("Z", ShaderDataType.VALUE, 0.0f, 2)
+	);
 
-    @Override
-    public List<ShaderSocket<?>> getInputs() {
-        return INPUTS;
-    }
+	@Override
+	public List<ShaderSocket<?>> getInputs() {
+		return INPUTS;
+	}
 
-    @Override
-    public List<ShaderSocket<?>> getOutputs() {
-        return OUTPUTS;
-    }
+	@Override
+	public List<ShaderSocket<?>> getOutputs() {
+		return OUTPUTS;
+	}
 
-    @Override
-    public void generateCode(StringBuilder builder, List<ShaderVariable> inputs, List<ShaderVariable> outputs) {
-        final var vector = inputs.get(0);
-        final var x = outputs.get(0);
-        final var y = outputs.get(1);
-        final var z = outputs.get(2);
+	@Override
+	public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
+		final var vector = variables.getInput(0);
+		final var x = variables.getOutput(0);
+		final var y = variables.getOutput(1);
+		final var z = variables.getOutput(2);
 
-        generateCode(builder, vector, x, "x");
-        builder.append("\n");
+		generateCode(writer, vector, x, "x");
+		generateCode(writer, vector, y, "y");
+		generateCode(writer, vector, z, "z");
+	}
 
-        generateCode(builder, vector, y, "y");
-        builder.append("\n");
+	public void generateCode(ShaderCodeWriter writer, ShaderVariable input, ShaderVariable output, String outputComponent) {
+		if (!output.linked()) {
+			return;
+		}
 
-        generateCode(builder, vector, z, "z");
-    }
-
-    public void generateCode(StringBuilder builder, ShaderVariable input, ShaderVariable output, String outputComponent) {
-        if (output.unused()) {
-            builder
-                    .append("// ");
-        }
-
-        builder
-                .append(output.type().getCodeType())
-                .append(" ")
-                .append(output.name())
-                .append(" = ")
-                .append(input.name())
-                .append(".")
-                .append(outputComponent)
-                .append(";");
-
-        if (output.unused()) {
-            builder
-                    .append(" /*unused*/");
-        }
-    }
+		writer
+			.declareAndAssign(output)
+			.value(input)
+			.field(outputComponent)
+			.endLine();
+	}
 
 }

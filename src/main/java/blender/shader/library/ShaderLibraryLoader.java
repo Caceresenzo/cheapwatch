@@ -1,23 +1,46 @@
 package blender.shader.library;
 
-import blender.shader.ShaderDataType;
-import blender.shader.ShaderSocket;
-import blender.shader.node.ShaderNode;
-import blender.shader.node.converter.*;
-import blender.shader.node.input.*;
-import blender.shader.node.shader.*;
-import blender.shader.node.group.GroupInputShaderNode;
-import blender.shader.node.group.GroupOutputShaderNode;
-import blender.shader.node.group.GroupShaderNode;
-import blender.shader.node.group.ShaderNodeGroup;
-import blender.shader.node.layout.FrameNode;
-import blender.shader.node.layout.RerouteNode;
-import com.fasterxml.jackson.databind.JsonNode;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
+
+import com.fasterxml.jackson.databind.JsonNode;
+
+import blender.shader.ShaderDataType;
+import blender.shader.ShaderSocket;
+import blender.shader.node.ShaderNode;
+import blender.shader.node.converter.CombineColorShaderNode;
+import blender.shader.node.converter.CombineXYZShaderNode;
+import blender.shader.node.converter.InvertShaderNode;
+import blender.shader.node.converter.MathShaderNode;
+import blender.shader.node.converter.MixShaderNode;
+import blender.shader.node.converter.SeparateColorShaderNode;
+import blender.shader.node.converter.SeparateXYZShaderNode;
+import blender.shader.node.converter.VectorMathShaderNode;
+import blender.shader.node.converter.VectorRotateShaderNode;
+import blender.shader.node.converter.VectorTransformShaderNode;
+import blender.shader.node.group.GroupInputShaderNode;
+import blender.shader.node.group.GroupOutputShaderNode;
+import blender.shader.node.group.GroupShaderNode;
+import blender.shader.node.group.ShaderNodeGroup;
+import blender.shader.node.input.FresnelShaderNode;
+import blender.shader.node.input.GeometryShaderNode;
+import blender.shader.node.input.LightPathShaderNode;
+import blender.shader.node.input.NormalMapShaderNode;
+import blender.shader.node.input.TangentShaderNode;
+import blender.shader.node.input.UVMapShaderNode;
+import blender.shader.node.input.ValueShaderNode;
+import blender.shader.node.input.VertexColorShaderNode;
+import blender.shader.node.layout.FrameNode;
+import blender.shader.node.layout.RerouteNode;
+import blender.shader.node.shader.BsdfDiffuseShaderNode;
+import blender.shader.node.shader.BsdfGlossyShaderNode;
+import blender.shader.node.shader.BsdfPrincipledShaderNode;
+import blender.shader.node.shader.BsdfTransparentShaderNode;
+import blender.shader.node.shader.EmissionShaderNode;
+import blender.shader.node.shader.ShaderAddShaderNode;
+import blender.shader.node.shader.ShaderMixShaderNode;
 
 public class ShaderLibraryLoader {
 
@@ -53,7 +76,15 @@ public class ShaderLibraryLoader {
                 return new MathShaderNode(operation, clamp);
             });
 
-            registerFactory("ShaderNodeMix", MixShaderNode::new);
+            registerFactory("ShaderNodeMix", (parent, attributes) -> {
+                final var clampFactor = attributes.get("clamp_factor").asBoolean();
+                final var clampResult = attributes.get("clamp_result").asBoolean();
+                final var factorMode = MixShaderNode.FactorMode.valueOf(attributes.get("factor_mode").asText());
+                final var blendType = MixShaderNode.BlendType.valueOf(attributes.get("blend_type").asText());
+                final var dataType = ShaderDataType.valueOf(attributes.get("data_type").asText());
+
+                return new MixShaderNode(clampFactor, clampResult, factorMode, blendType, dataType);
+            });
             registerFactory("ShaderNodeSeparateColor", SeparateColorShaderNode::new);
             registerFactory("ShaderNodeSeparateXYZ", SeparateXYZShaderNode::new);
 
@@ -116,6 +147,21 @@ public class ShaderLibraryLoader {
             final var nodesRoot = shaderJsonNode.get("nodes");
 
             addInputsAndOutputs(group, nodesRoot, true);
+        }
+
+//        for (final var name : library.names()) {
+//            final var group = library.get(name);
+//
+//            System.out.println(name);
+//            System.out.println(group.getInputs().size());
+//        }
+
+        for (final var shaderJsonNode : libraryRoot) {
+            final var name = shaderJsonNode.get("name").asText();
+            final var group = library.get(name);
+
+            final var nodesRoot = shaderJsonNode.get("nodes");
+
             addInputsAndOutputs(group, nodesRoot, false);
         }
 

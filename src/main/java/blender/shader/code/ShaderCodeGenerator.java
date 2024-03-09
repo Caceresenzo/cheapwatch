@@ -1,19 +1,19 @@
 package blender.shader.code;
 
-import blender.shader.ShaderSocket;
-import blender.shader.code.ShaderVariable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import blender.shader.ShaderDataType;
 import blender.shader.graph.ShaderNodeGraph;
 import blender.shader.node.ShaderNode;
 import lombok.RequiredArgsConstructor;
-
-import java.util.*;
 
 @RequiredArgsConstructor
 public class ShaderCodeGenerator {
 
     private final ShaderNodeGraph nodeGraph;
-    private final Map<Map.Entry<ShaderNode, ShaderSocket>, ShaderVariable> allocatedVariables = new HashMap<>();
-    private final Set<String> allocatedVariableNames = new HashSet<>();
+    private final ShaderVariableAllocator variableAllocator;
     private final List<ShaderNode> visitedNodes = new ArrayList<>(); // nodes does not support hashCode
 
     public String generate() {
@@ -46,11 +46,11 @@ public class ShaderCodeGenerator {
 
         final var inputsArray = new ShaderVariable[node.getInputs().size()];
         for (final var link : node.getReverseLinks()) {
-            final var variable = getOrAllocateVariable(link.fromNode(), link.fromPort(), true);
+            final var variable = variableAllocator.getOrAllocateSocket(link.fromNode(), link.fromPort(), true);
             final var index = link.toPort().index();
 
             if (inputsArray[index] != null) {
-                throw new IllegalStateException("already allocated port?");
+                throw new IllegalStateException("already allocated socket?");
             }
 
             inputsArray[index] = variable;
@@ -71,9 +71,9 @@ public class ShaderCodeGenerator {
             }
 
             final var variable = new ShaderVariable(
-                    port.type().render(defaultValue) + comment,
+                    ((ShaderDataType) port.type()).render(defaultValue) + comment,
                     port,
-                    true
+                    false
             );
 
             inputsArray[index] = variable;
@@ -83,7 +83,7 @@ public class ShaderCodeGenerator {
 
         final var outputArray = new ShaderVariable[node.getOutputs().size()];
         for (final var link : node.getLinks()) {
-            final var variable = getOrAllocateVariable(link.fromNode(), link.fromPort(), true);
+            final var variable = variableAllocator.getOrAllocateSocket(link.fromNode(), link.fromPort(), true);
             final var index = link.fromPort().index();
 
             if (outputArray[index] != null) {
@@ -99,7 +99,7 @@ public class ShaderCodeGenerator {
             }
 
             final var port = node.getOutputs().get(index);
-            final var variable = getOrAllocateVariable(node, port, false);
+            final var variable = variableAllocator.getOrAllocateSocket(node, port, false);
 
             outputArray[index] = variable;
         }
@@ -107,36 +107,14 @@ public class ShaderCodeGenerator {
         final var outputs = Arrays.asList(outputArray);
 
         final var builder = new StringBuilder();
-        node.generateCode(builder, inputs, outputs);
+        final var writer = new ShaderCodeWriter(builder);
+
+        final var variables = new ShaderVariables(inputs, outputs, variableAllocator);
+
+        node.generateCode(writer, variables);
 
         visitedNodes.add(node);
         return builder.toString();
-    }
-
-    public ShaderVariable getOrAllocateVariable(ShaderNode node, ShaderSocket port, boolean used) {
-        final var key = Map.entry(node, port);
-        var variable = allocatedVariables.get(key);
-
-        if (variable == null) {
-            final var baseName = "%s__%s".formatted(node.getName(), port.name())
-                    .replace(" ", "_")
-                    .replace(".", "_");
-
-            String name;
-            for (int index = 0; ; index++) {
-                name = "%s__%s".formatted(baseName, index);
-                if (!allocatedVariableNames.contains(name)) {
-                    break;
-                }
-            }
-
-            variable = new ShaderVariable(name, port, used);
-
-            allocatedVariables.put(key, variable);
-            allocatedVariableNames.add(name);
-        }
-
-        return variable;
     }
 
 }

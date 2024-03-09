@@ -1,14 +1,15 @@
 package blender.shader.node.input;
 
+import java.util.Collections;
+import java.util.List;
+
 import blender.shader.ShaderDataType;
 import blender.shader.ShaderSocket;
-import blender.shader.code.ShaderVariable;
+import blender.shader.code.ShaderCodeWriter;
+import blender.shader.code.ShaderVariables;
 import blender.shader.node.ShaderNode;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-
-import java.util.Collections;
-import java.util.List;
 
 @ToString(callSuper = true)
 @RequiredArgsConstructor
@@ -35,16 +36,13 @@ public class ValueShaderNode extends ShaderNode {
     }
 
     @Override
-    public void generateCode(StringBuilder builder, List<ShaderVariable> inputs, List<ShaderVariable> outputs) {
-        final var x = outputs.get(0);
+    public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
+        final var x = variables.getOutput(0);
 
-        builder
-                .append(x.type().getCodeType())
-                .append(" ")
-                .append(x.name())
-                .append(" = ")
-                .append(x.port().type().render(value))
-                .append(";");
+        writer
+                .declareAndAssign(x)
+                .value(x.type(), value)
+                .endLine();
     }
 
 }

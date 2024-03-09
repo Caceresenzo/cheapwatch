@@ -1,15 +1,14 @@
 package blender.shader;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.FloatNode;
-import com.fasterxml.jackson.databind.node.IntNode;
-import com.fasterxml.jackson.databind.node.NumericNode;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 import org.joml.Vector4f;
 import org.joml.Vector4fc;
+
+import com.fasterxml.jackson.databind.JsonNode;
+
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Getter
@@ -18,8 +17,8 @@ public abstract class ShaderDataType<T> {
 	public static final ShaderDataType<Float> VALUE = new ShaderDataType<>("VALUE", "float", 0.0f) {
 
 		@Override
-		public String render(Object value) {
-			return "%sf".formatted((float) value);
+		public String render(Float value) {
+			return "%s".formatted(value);
 		}
 
 		@Override
@@ -32,10 +31,8 @@ public abstract class ShaderDataType<T> {
 	public static final ShaderDataType<Vector3fc> VECTOR = new ShaderDataType<>("VECTOR", "vec3", new Vector3f()) {
 
 		@Override
-		public String render(Object value) {
-			final var vector = (Vector3fc) value;
-
-			return "vec3(%sf, %sf, %sf)".formatted(vector.x(), vector.y(), vector.z());
+		public String render(Vector3fc vector) {
+			return "vec3(%s, %s, %s)".formatted(vector.x(), vector.y(), vector.z());
 		}
 
 		@Override
@@ -52,7 +49,7 @@ public abstract class ShaderDataType<T> {
 	public static final ShaderDataType<Vector3fc> ROTATION = new ShaderDataType<>("ROTATION", VECTOR.codeType, VECTOR.defaultValue) {
 
 		@Override
-		public String render(Object value) {
+		public String render(Vector3fc value) {
 			return VECTOR.render(value);
 		}
 
@@ -66,10 +63,8 @@ public abstract class ShaderDataType<T> {
 	public static final ShaderDataType<Vector4fc> RGBA = new ShaderDataType<>("RGBA", "vec4", new Vector4f()) {
 
 		@Override
-		public String render(Object value) {
-			final var vector = (Vector4fc) value;
-
-			return "vec4(%sf, %sf, %sf, %sf)".formatted(vector.x(), vector.y(), vector.z(), vector.w());
+		public String render(Vector4fc vector) {
+			return "vec4(%s, %s, %s, %s)".formatted(vector.x(), vector.y(), vector.z(), vector.w());
 		}
 
 		@Override
@@ -87,7 +82,7 @@ public abstract class ShaderDataType<T> {
 	public static final ShaderDataType<Vector4fc> SHADER = new ShaderDataType<>("SHADER", RGBA.codeType, RGBA.defaultValue) {
 
 		@Override
-		public String render(Object value) {
+		public String render(Vector4fc value) {
 			return RGBA.render(value);
 		}
 
@@ -106,7 +101,7 @@ public abstract class ShaderDataType<T> {
 	private final String codeType;
 	private final T defaultValue;
 
-    public abstract String render(Object value);
+    public abstract String render(T value);
 
 	public abstract T parse(JsonNode valueNode);
 
@@ -122,9 +117,9 @@ public abstract class ShaderDataType<T> {
 
 	public static ShaderDataType<?> valueOf(String name) {
 		return switch (name) {
-			case "VALUE" -> VALUE;
+			case "VALUE", "FLOAT" -> VALUE;
 			case "VECTOR" -> VECTOR;
-			case "RGBA" -> RGBA;
+			case "RGBA", "COLOR" -> RGBA;
 			case "ROTATION" -> ROTATION;
 			case "SHADER" -> SHADER;
 			default -> throw new IllegalArgumentException("unknown type: %s".formatted(name));

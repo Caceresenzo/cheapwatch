@@ -17,6 +17,7 @@ import org.joml.Matrix4f;
 import org.joml.Vector3fc;
 
 import cheapwatch.Game;
+import cheapwatch.debug.CubeMesh;
 import cheapwatch.format.OverwatchLoader;
 import cheapwatch.format.OverwatchTextureMapping;
 import cheapwatch.format.OverwatchTextureTypes;
@@ -25,7 +26,6 @@ import cheapwatch.format.map.OverwatchGroup;
 import cheapwatch.format.map.OverwatchInstance;
 import cheapwatch.format.map.OverwatchObject;
 import cheapwatch.format.map.OverwatchProp;
-import cheapwatch.debug.CubeMesh;
 import cheapwatch.render.MovableCamera;
 import cheapwatch.render.SimpleShaderProgram;
 import lombok.AccessLevel;

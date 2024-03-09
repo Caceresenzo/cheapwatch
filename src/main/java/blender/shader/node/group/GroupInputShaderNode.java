@@ -1,12 +1,13 @@
 package blender.shader.node.group;
 
-import blender.shader.ShaderSocket;
-import blender.shader.code.ShaderVariable;
-import blender.shader.node.ShaderNode;
-import lombok.ToString;
-
 import java.util.Collections;
 import java.util.List;
+
+import blender.shader.ShaderSocket;
+import blender.shader.code.ShaderCodeWriter;
+import blender.shader.code.ShaderVariables;
+import blender.shader.node.ShaderNode;
+import lombok.ToString;
 
 @ToString(callSuper = true)
 public class GroupInputShaderNode extends ShaderNode {
@@ -31,19 +32,15 @@ public class GroupInputShaderNode extends ShaderNode {
     }
 
     @Override
-    public void generateCode(StringBuilder builder, List<ShaderVariable> inputs, List<ShaderVariable> outputs) {
-        builder.append("// inputs:\n");
+    public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
+        writer.comment("inputs:").endLine();
 
-        final var size = outputs.size();
+        final var size = variables.getOutputsCount();
         for (int index = 0; index < size; index++) {
-            final var port = getOutputs().get(index);
-            final var variable = outputs.get(index);
+            final var socket = getOutputs().get(index);
+            final var variable = variables.getOutput(index);
 
-            builder.append("// ")
-                    .append(port.name())
-                    .append(" = ")
-                    .append(variable.name())
-                    .append("\n");
+            writer.comment("%s = %s".formatted(socket.name(), variable.name())).endLine();
         }
     }
 
