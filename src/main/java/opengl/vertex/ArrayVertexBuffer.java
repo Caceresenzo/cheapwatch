@@ -2,6 +2,8 @@ package opengl.vertex;
 
 import static org.lwjgl.opengl.GL15.glBufferData;
 
+import java.nio.FloatBuffer;
+
 import org.lwjgl.system.MemoryUtil;
 
 import it.unimi.dsi.fastutil.floats.FloatList;
@@ -23,6 +25,13 @@ public class ArrayVertexBuffer extends AbstractVertexBuffer {
 		return (ArrayVertexBuffer) super.unbind();
 	}
 
+	public ArrayVertexBuffer store(FloatBuffer data) {
+		bind();
+		glBufferData(target.getValue(), data, usage.getValue());
+		setSize(data.remaining(), Float.BYTES);
+		return this;
+	}
+	
 	public ArrayVertexBuffer store(float[] data) {
 		bind();
 		glBufferData(target.getValue(), data, usage.getValue());

@@ -26,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public abstract class OverwatchReader<T> {
 
-	private final ByteBuffer buffer;
+	protected final ByteBuffer buffer;
 
 	public OverwatchVersion readVersion() {
 		return new OverwatchVersion(
@@ -146,6 +146,10 @@ public abstract class OverwatchReader<T> {
 		buffer.get(array);
 
 		return ByteArrayList.wrap(array);
+	}
+
+	public void skip(int n) {
+		buffer.position(buffer.position() + n);
 	}
 
 }

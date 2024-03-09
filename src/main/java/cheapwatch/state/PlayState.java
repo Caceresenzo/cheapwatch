@@ -171,12 +171,12 @@ public class PlayState implements GameState {
 				for (final var overwatchMesh : model.meshes()) {
 					//				System.out.printf("  load mesh %n");
 
-					final var indicesData = Vectors.flatten3i(overwatchMesh.indexes());
-					final var positionsData = flatten3fSwapYZ(overwatchMesh.positions());
+					final var indicesData = overwatchMesh.indexes();
+					final var positionsData = overwatchMesh.positions();
 
 					final var uvsData = overwatchMesh.uvss().isEmpty()
 						? null
-						: Vectors.flatten2f(overwatchMesh.uvss().getFirst());
+						: overwatchMesh.uvss().getFirst();
 
 					final VertexArray array;
 					try (final var context = Game.acquireContext()) {
@@ -312,20 +312,6 @@ public class PlayState implements GameState {
 		glfwSetMouseButtonCallback(Game.window, null);
 
 		executor.shutdownNow();
-	}
-
-	public static float[] flatten3fSwapYZ(List<? extends Vector3fc> vectors) {
-		final var size = vectors.size();
-		final var array = new float[size * 3];
-
-		for (var index = 0; index < size; ++index) {
-			final var vector = vectors.get(index);
-			array[index * 3 + 0] = vector.x();
-			array[index * 3 + 1] = vector.z();
-			array[index * 3 + 2] = -vector.y();
-		}
-
-		return array;
 	}
 
 }

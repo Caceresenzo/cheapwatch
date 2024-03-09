@@ -2,6 +2,8 @@ package opengl.vertex;
 
 import static org.lwjgl.opengl.GL15.glBufferData;
 
+import java.nio.IntBuffer;
+
 import it.unimi.dsi.fastutil.ints.IntList;
 
 public class IndiceVertexBuffer extends AbstractVertexBuffer {
@@ -20,6 +22,13 @@ public class IndiceVertexBuffer extends AbstractVertexBuffer {
 		return (IndiceVertexBuffer) super.unbind();
 	}
 
+	public IndiceVertexBuffer store(IntBuffer data) {
+		bind();
+		glBufferData(target.getValue(), data, usage.getValue());
+		setSize(data.remaining(), Integer.BYTES);
+		return this;
+	}
+	
 	public IndiceVertexBuffer store(int[] data) {
 		bind();
 		glBufferData(target.getValue(), data, usage.getValue());
