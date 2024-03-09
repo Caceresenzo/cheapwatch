@@ -18,8 +18,8 @@ public class ShaderNodeGroup implements ShaderNodeGraph {
 
 	private @Setter String name;
 
-	private final List<ShaderSocket<?>> inputs = new ArrayList<>();
-	private final List<ShaderSocket<?>> outputs = new ArrayList<>();
+	private final List<ShaderSocket> inputs = new ArrayList<>();
+	private final List<ShaderSocket> outputs = new ArrayList<>();
 	private final List<ShaderNode> nodes = new ArrayList<>();
 
 	private final GroupOutputShaderNode outputNode;
@@ -30,12 +30,12 @@ public class ShaderNodeGroup implements ShaderNodeGraph {
 		addNode(inputNode = new GroupInputShaderNode(this));
 	}
 
-	public ShaderNodeGroup addInput(ShaderSocket<?> input) {
+	public ShaderNodeGroup addInput(ShaderSocket input) {
 		this.inputs.add(input);
 		return this;
 	}
 
-	public ShaderNodeGroup addOutput(ShaderSocket<?> output) {
+	public ShaderNodeGroup addOutput(ShaderSocket output) {
 		this.outputs.add(output);
 		return this;
 	}
@@ -45,11 +45,11 @@ public class ShaderNodeGroup implements ShaderNodeGraph {
 		return this;
 	}
 
-	public List<ShaderSocket<?>> getInputs() {
+	public List<ShaderSocket> getInputs() {
 		return Collections.unmodifiableList(inputs);
 	}
 
-	public List<ShaderSocket<?>> getOutputs() {
+	public List<ShaderSocket> getOutputs() {
 		return Collections.unmodifiableList(outputs);
 	}
 

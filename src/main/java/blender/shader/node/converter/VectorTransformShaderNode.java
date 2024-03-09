@@ -16,21 +16,21 @@ import lombok.ToString;
 @RequiredArgsConstructor
 public class VectorTransformShaderNode extends ShaderNode {
 
-	public static final List<ShaderSocket<?>> INPUTS = List.of(
-		new ShaderSocket<>("Vector", ShaderDataType.VECTOR, new Vector3f(0.5f, 0.5f, 0.5f), 0)
+	public static final List<ShaderSocket> INPUTS = List.of(
+		new ShaderSocket("Vector", ShaderDataType.VECTOR, new Vector3f(0.5f, 0.5f, 0.5f), 0)
 	);
 
-	public static final List<ShaderSocket<?>> OUTPUTS = List.of(
-		new ShaderSocket<>("Vector", ShaderDataType.VECTOR, 0)
+	public static final List<ShaderSocket> OUTPUTS = List.of(
+		new ShaderSocket("Vector", ShaderDataType.VECTOR, 0)
 	);
 
 	@Override
-	public List<ShaderSocket<?>> getInputs() {
+	public List<ShaderSocket> getInputs() {
 		return INPUTS;
 	}
 
 	@Override
-	public List<ShaderSocket<?>> getOutputs() {
+	public List<ShaderSocket> getOutputs() {
 		return OUTPUTS;
 	}
 

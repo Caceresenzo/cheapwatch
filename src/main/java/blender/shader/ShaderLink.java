@@ -7,16 +7,16 @@ import blender.shader.node.ShaderNode;
 public record ShaderLink(
 	UUID id,
 	ShaderNode fromNode,
-	ShaderSocket<?> fromPort,
+	ShaderSocket fromPort,
 	ShaderNode toNode,
-	ShaderSocket<?> toPort
+	ShaderSocket toPort
 ) {
 
 	public ShaderLink(
 		ShaderNode fromNode,
-		ShaderSocket<?> fromPort,
+		ShaderSocket fromPort,
 		ShaderNode toNode,
-		ShaderSocket<?> toPort
+		ShaderSocket toPort
 	) {
 		this(
 			UUID.randomUUID(),

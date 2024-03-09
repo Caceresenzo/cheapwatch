@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import blender.shader.ShaderDataType;
 import blender.shader.graph.ShaderNodeGraph;
 import blender.shader.node.ShaderNode;
 import lombok.RequiredArgsConstructor;
@@ -71,7 +70,7 @@ public class ShaderCodeGenerator {
 			}
 
 			final var variable = new ShaderVariable(
-				((ShaderDataType) port.type()).render(defaultValue) + comment,
+				port.type().render(defaultValue) + comment,
 				port,
 				false
 			);

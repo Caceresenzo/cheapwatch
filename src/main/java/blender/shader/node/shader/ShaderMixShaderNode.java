@@ -12,23 +12,23 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class ShaderMixShaderNode extends ShaderNode {
 
-	public static final List<ShaderSocket<?>> INPUTS = List.of(
-		new ShaderSocket<>("Fac", ShaderDataType.VALUE, 0.5f, 0),
-		new ShaderSocket<>("Shader", ShaderDataType.SHADER, 1),
-		new ShaderSocket<>("Shader", "Shader_001", ShaderDataType.SHADER, 2)
+	public static final List<ShaderSocket> INPUTS = List.of(
+		new ShaderSocket("Fac", ShaderDataType.VALUE, 0.5f, 0),
+		new ShaderSocket("Shader", ShaderDataType.SHADER, 1),
+		new ShaderSocket("Shader", "Shader_001", ShaderDataType.SHADER, 2)
 	);
 
-	public static final List<ShaderSocket<?>> OUTPUTS = List.of(
-		new ShaderSocket<>("Shader", ShaderDataType.SHADER, 0)
+	public static final List<ShaderSocket> OUTPUTS = List.of(
+		new ShaderSocket("Shader", ShaderDataType.SHADER, 0)
 	);
 
 	@Override
-	public List<ShaderSocket<?>> getInputs() {
+	public List<ShaderSocket> getInputs() {
 		return INPUTS;
 	}
 
 	@Override
-	public List<ShaderSocket<?>> getOutputs() {
+	public List<ShaderSocket> getOutputs() {
 		return OUTPUTS;
 	}
 

@@ -22,12 +22,12 @@ public class GroupOutputShaderNode extends ShaderNode {
 	}
 
 	@Override
-	public List<ShaderSocket<?>> getInputs() {
+	public List<ShaderSocket> getInputs() {
 		return group.getOutputs();
 	}
 
 	@Override
-	public List<ShaderSocket<?>> getOutputs() {
+	public List<ShaderSocket> getOutputs() {
 		return Collections.emptyList();
 	}
 

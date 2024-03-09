@@ -47,7 +47,7 @@ public class ShaderCodeWriter {
 		return this;
 	}
 
-	public <T> ShaderCodeWriter value(ShaderDataType<T> type, T value) {
+	public <T> ShaderCodeWriter value(ShaderDataType type, T value) {
 		builder
 			.append(type.render(value));
 
@@ -92,7 +92,7 @@ public class ShaderCodeWriter {
 		return this;
 	}
 
-	public ShaderCodeWriter useBinaryOperator(String operator, ShaderVariable<?> left, ShaderVariable<?> right) {
+	public ShaderCodeWriter useBinaryOperator(String operator, ShaderVariable left, ShaderVariable right) {
 		builder
 			.append(left.name())
 			.append(" ")
@@ -103,7 +103,7 @@ public class ShaderCodeWriter {
 		return this;
 	}
 
-	public ShaderCodeWriter useFunctionCall(String name, ShaderVariable<?> x) {
+	public ShaderCodeWriter useFunctionCall(String name, ShaderVariable x) {
 		builder
 			.append(name)
 			.append("(")
@@ -113,7 +113,7 @@ public class ShaderCodeWriter {
 		return this;
 	}
 
-	public ShaderCodeWriter useBiFunctionCall(String name, ShaderVariable<?> x, ShaderVariable<?> y) {
+	public ShaderCodeWriter useBiFunctionCall(String name, ShaderVariable x, ShaderVariable y) {
 		builder
 			.append(name)
 			.append("(")
@@ -125,7 +125,7 @@ public class ShaderCodeWriter {
 		return this;
 	}
 
-	public ShaderCodeWriter useComparison(String operator, ShaderVariable<?> left, ShaderVariable<?> right) {
+	public ShaderCodeWriter useComparison(String operator, ShaderVariable left, ShaderVariable right) {
 		builder
 			.append("((")
 			.append(left.name())
@@ -138,7 +138,7 @@ public class ShaderCodeWriter {
 		return this;
 	}
 
-	public ShaderCodeWriter useTrinaryOperator(String operator1, String operator2, ShaderVariable<?> left, ShaderVariable<?> middle, ShaderVariable<?> right) {
+	public ShaderCodeWriter useTrinaryOperator(String operator1, String operator2, ShaderVariable left, ShaderVariable middle, ShaderVariable right) {
 		builder
 			.append(left.name())
 			.append(" ")

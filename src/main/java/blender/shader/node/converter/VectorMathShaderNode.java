@@ -17,27 +17,27 @@ import lombok.ToString;
 @RequiredArgsConstructor
 public class VectorMathShaderNode extends ShaderNode {
 
-	public static final List<ShaderSocket<?>> INPUTS = List.of(
-		new ShaderSocket<>("Vector", ShaderDataType.VECTOR, new Vector3f(), 0),
-		new ShaderSocket<>("Vector", "Vector_001", ShaderDataType.VECTOR, new Vector3f(), 1),
-		new ShaderSocket<>("Vector", "Vector_002", ShaderDataType.VECTOR, new Vector3f(), 2),
-		new ShaderSocket<>("Scale", ShaderDataType.VALUE, 1.0f, 3)
+	public static final List<ShaderSocket> INPUTS = List.of(
+		new ShaderSocket("Vector", ShaderDataType.VECTOR, new Vector3f(), 0),
+		new ShaderSocket("Vector", "Vector_001", ShaderDataType.VECTOR, new Vector3f(), 1),
+		new ShaderSocket("Vector", "Vector_002", ShaderDataType.VECTOR, new Vector3f(), 2),
+		new ShaderSocket("Scale", ShaderDataType.VALUE, 1.0f, 3)
 	);
 
-	public static final List<ShaderSocket<?>> OUTPUTS = List.of(
-		new ShaderSocket<>("Vector", ShaderDataType.VECTOR, new Vector3f(), 0),
-		new ShaderSocket<>("Value", ShaderDataType.VALUE, 0.0f, 1)
+	public static final List<ShaderSocket> OUTPUTS = List.of(
+		new ShaderSocket("Vector", ShaderDataType.VECTOR, new Vector3f(), 0),
+		new ShaderSocket("Value", ShaderDataType.VALUE, 0.0f, 1)
 	);
 
 	private final Operation operation;
 
 	@Override
-	public List<ShaderSocket<?>> getInputs() {
+	public List<ShaderSocket> getInputs() {
 		return INPUTS;
 	}
 
 	@Override
-	public List<ShaderSocket<?>> getOutputs() {
+	public List<ShaderSocket> getOutputs() {
 		return OUTPUTS;
 	}
 

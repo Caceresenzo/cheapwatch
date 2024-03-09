@@ -14,23 +14,23 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class CombineColorShaderNode extends ShaderNode {
 
-	public static final List<ShaderSocket<?>> INPUTS = List.of(
-		new ShaderSocket<>("Red", ShaderDataType.VALUE, 0.0f, 0),
-		new ShaderSocket<>("Green", ShaderDataType.VALUE, 0.0f, 1),
-		new ShaderSocket<>("Blue", ShaderDataType.VALUE, 0.0f, 2)
+	public static final List<ShaderSocket> INPUTS = List.of(
+		new ShaderSocket("Red", ShaderDataType.VALUE, 0.0f, 0),
+		new ShaderSocket("Green", ShaderDataType.VALUE, 0.0f, 1),
+		new ShaderSocket("Blue", ShaderDataType.VALUE, 0.0f, 2)
 	);
 
-	public static final List<ShaderSocket<?>> OUTPUTS = List.of(
-		new ShaderSocket<>("Color", ShaderDataType.RGBA, new Vector4f(0.8f, 0.8f, 0.8f, 1.0f), 0)
+	public static final List<ShaderSocket> OUTPUTS = List.of(
+		new ShaderSocket("Color", ShaderDataType.RGBA, new Vector4f(0.8f, 0.8f, 0.8f, 1.0f), 0)
 	);
 
 	@Override
-	public List<ShaderSocket<?>> getInputs() {
+	public List<ShaderSocket> getInputs() {
 		return INPUTS;
 	}
 
 	@Override
-	public List<ShaderSocket<?>> getOutputs() {
+	public List<ShaderSocket> getOutputs() {
 		return OUTPUTS;
 	}
 

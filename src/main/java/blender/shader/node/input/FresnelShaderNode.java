@@ -14,22 +14,22 @@ import lombok.ToString;
 @RequiredArgsConstructor
 public class FresnelShaderNode extends ShaderNode {
 
-	public static final List<ShaderSocket<?>> INPUTS = List.of(
-		new ShaderSocket<>("IOR", ShaderDataType.VALUE, 1.5f, 0),
-		new ShaderSocket<>("Normal", ShaderDataType.VECTOR, 1)
+	public static final List<ShaderSocket> INPUTS = List.of(
+		new ShaderSocket("IOR", ShaderDataType.VALUE, 1.5f, 0),
+		new ShaderSocket("Normal", ShaderDataType.VECTOR, 1)
 	);
 
-	public static final List<ShaderSocket<?>> OUTPUTS = List.of(
-		new ShaderSocket<>("Fac", ShaderDataType.VALUE, 0)
+	public static final List<ShaderSocket> OUTPUTS = List.of(
+		new ShaderSocket("Fac", ShaderDataType.VALUE, 0)
 	);
 
 	@Override
-	public List<ShaderSocket<?>> getInputs() {
+	public List<ShaderSocket> getInputs() {
 		return INPUTS;
 	}
 
 	@Override
-	public List<ShaderSocket<?>> getOutputs() {
+	public List<ShaderSocket> getOutputs() {
 		return OUTPUTS;
 	}
 

@@ -11,16 +11,6 @@ import cheapwatch.state.PlayState;
 
 public class Bootstrap {
 
-	public static ShaderDataType<?> fromBlenderSocketIdName(String idName) {
-		return switch (idName) {
-			case "NodeSocketColor" -> ShaderDataType.VECTOR;
-			case "NodeSocketFloat" -> ShaderDataType.VALUE;
-			case "NodeSocketFloatFactor" -> ShaderDataType.VALUE;
-			case "NodeSocketShader" -> ShaderDataType.VALUE; // TODO ??
-			default -> throw new IllegalStateException("unknown socket idname: " + idName);
-		};
-	}
-
 	public static void main(String[] args) throws Exception {
 		final var objectMapper = new ObjectMapper();
 		//        final var root = (ObjectNode) objectMapper.readTree(Bootstrap.class.getResourceAsStream("/owm_unpack_blue_channel.json"));

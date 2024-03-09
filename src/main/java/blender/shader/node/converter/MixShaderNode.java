@@ -18,47 +18,47 @@ import lombok.ToString;
 @RequiredArgsConstructor
 public class MixShaderNode extends ShaderNode {
 
-	public static final List<ShaderSocket<?>> INPUTS = List.of(
-		new ShaderSocket<>("Factor", "Factor_Float", ShaderDataType.VALUE, 0.5f, 0),
-		new ShaderSocket<>("Factor", "Factor_Vector", ShaderDataType.VECTOR, new Vector3f(0.5f), 1),
-		new ShaderSocket<>("A", "A_Float", ShaderDataType.VALUE, 0.0f, 2),
-		new ShaderSocket<>("B", "B_Float", ShaderDataType.VALUE, 0.0f, 3),
-		new ShaderSocket<>("A", "A_Vector", ShaderDataType.VECTOR, new Vector3f(0.0f), 4),
-		new ShaderSocket<>("B", "B_Vector", ShaderDataType.VECTOR, new Vector3f(0.0f), 5),
-		new ShaderSocket<>("A", "A_Color", ShaderDataType.RGBA, new Vector4f(0.5f, 0.5f, 0.5f, 1.0f), 6),
-		new ShaderSocket<>("B", "B_Color", ShaderDataType.RGBA, new Vector4f(0.5f, 0.5f, 0.5f, 1.0f), 7),
-		new ShaderSocket<>("A", "A_Rotation", ShaderDataType.ROTATION, 6),
-		new ShaderSocket<>("B", "B_Rotation", ShaderDataType.ROTATION, 7)
+	public static final List<ShaderSocket> INPUTS = List.of(
+		new ShaderSocket("Factor", "Factor_Float", ShaderDataType.VALUE, 0.5f, 0),
+		new ShaderSocket("Factor", "Factor_Vector", ShaderDataType.VECTOR, new Vector3f(0.5f), 1),
+		new ShaderSocket("A", "A_Float", ShaderDataType.VALUE, 0.0f, 2),
+		new ShaderSocket("B", "B_Float", ShaderDataType.VALUE, 0.0f, 3),
+		new ShaderSocket("A", "A_Vector", ShaderDataType.VECTOR, new Vector3f(0.0f), 4),
+		new ShaderSocket("B", "B_Vector", ShaderDataType.VECTOR, new Vector3f(0.0f), 5),
+		new ShaderSocket("A", "A_Color", ShaderDataType.RGBA, new Vector4f(0.5f, 0.5f, 0.5f, 1.0f), 6),
+		new ShaderSocket("B", "B_Color", ShaderDataType.RGBA, new Vector4f(0.5f, 0.5f, 0.5f, 1.0f), 7),
+		new ShaderSocket("A", "A_Rotation", ShaderDataType.ROTATION, 6),
+		new ShaderSocket("B", "B_Rotation", ShaderDataType.ROTATION, 7)
 	);
 
-	public static final List<ShaderSocket<?>> OUTPUTS = List.of(
-		new ShaderSocket<>("Result", "Result_Float", ShaderDataType.VALUE, null, 0),
-		new ShaderSocket<>("Result", "Result_Vector", ShaderDataType.VECTOR, null, 1),
-		new ShaderSocket<>("Result", "Result_Color", ShaderDataType.RGBA, null, 2),
-		new ShaderSocket<>("Result", "Result_Rotation", ShaderDataType.ROTATION, null, 3)
+	public static final List<ShaderSocket> OUTPUTS = List.of(
+		new ShaderSocket("Result", "Result_Float", ShaderDataType.VALUE, null, 0),
+		new ShaderSocket("Result", "Result_Vector", ShaderDataType.VECTOR, null, 1),
+		new ShaderSocket("Result", "Result_Color", ShaderDataType.RGBA, null, 2),
+		new ShaderSocket("Result", "Result_Rotation", ShaderDataType.ROTATION, null, 3)
 	);
 
 	private final boolean clampFactor;
 	private final boolean clampResult;
 	private final FactorMode factorMode;
 	private final BlendType blendType;
-	private final ShaderDataType<?> dataType;
+	private final ShaderDataType dataType;
 
 	@Override
-	public List<ShaderSocket<?>> getInputs() {
+	public List<ShaderSocket> getInputs() {
 		return INPUTS;
 	}
 
 	@Override
-	public List<ShaderSocket<?>> getOutputs() {
+	public List<ShaderSocket> getOutputs() {
 		return OUTPUTS;
 	}
 
 	@Override
 	public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
-		ShaderVariable<?> factor;
-		final ShaderVariable<?> value1;
-		final ShaderVariable<?> value2;
+		ShaderVariable factor;
+		final ShaderVariable value1;
+		final ShaderVariable value2;
 
 		if (ShaderDataType.VALUE.equals(dataType)) {
 			factor = variables.getInput(0);

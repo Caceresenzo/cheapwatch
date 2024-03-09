@@ -14,26 +14,26 @@ import lombok.ToString;
 @RequiredArgsConstructor
 public class MathShaderNode extends ShaderNode {
 
-	public static final List<ShaderSocket<?>> INPUTS = List.of(
-		new ShaderSocket<>("A", ShaderDataType.VALUE, 0.5f, 0),
-		new ShaderSocket<>("B", ShaderDataType.VALUE, 0.5f, 1),
-		new ShaderSocket<>("C", ShaderDataType.VALUE, 0.5f, 2)
+	public static final List<ShaderSocket> INPUTS = List.of(
+		new ShaderSocket("A", ShaderDataType.VALUE, 0.5f, 0),
+		new ShaderSocket("B", ShaderDataType.VALUE, 0.5f, 1),
+		new ShaderSocket("C", ShaderDataType.VALUE, 0.5f, 2)
 	);
 
-	public static final List<ShaderSocket<?>> OUTPUTS = List.of(
-		new ShaderSocket<>("Value", ShaderDataType.VALUE, 0.0f, 0)
+	public static final List<ShaderSocket> OUTPUTS = List.of(
+		new ShaderSocket("Value", ShaderDataType.VALUE, 0.0f, 0)
 	);
 
 	private final Operation operation;
 	private final boolean clamp;
 
 	@Override
-	public List<ShaderSocket<?>> getInputs() {
+	public List<ShaderSocket> getInputs() {
 		return INPUTS;
 	}
 
 	@Override
-	public List<ShaderSocket<?>> getOutputs() {
+	public List<ShaderSocket> getOutputs() {
 		return OUTPUTS;
 	}
 

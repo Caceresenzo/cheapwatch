@@ -14,15 +14,15 @@ public class ShaderVariableAllocator {
 	private final Map<Map.Entry<ShaderNode, ShaderSocket>, ShaderVariable> allocatedSockets = new HashMap<>();
 	private final Set<String> allocatedNames = new HashSet<>();
 
-	public <T> ShaderVariable<T> getOrAllocateSocket(ShaderNode node, ShaderSocket<T> socket, boolean linked) {
-		final var key = Map.entry(node, (ShaderSocket) socket);
+	public ShaderVariable getOrAllocateSocket(ShaderNode node, ShaderSocket socket, boolean linked) {
+		final var key = Map.entry(node, socket);
 		var variable = allocatedSockets.get(key);
 
 		if (variable == null) {
 			final var baseName = sanitize("%s_%s".formatted(node.getName(), socket.name()));
 
 			final var name = allocateName(baseName);
-			variable = new ShaderVariable<>(name, socket, linked);
+			variable = new ShaderVariable(name, socket, linked);
 
 			allocatedSockets.put(key, variable);
 		}
@@ -30,11 +30,11 @@ public class ShaderVariableAllocator {
 		return variable;
 	}
 
-	public <T> ShaderVariable<T> allocateTemporary(String hint, ShaderDataType<T> type) {
+	public ShaderVariable allocateTemporary(String hint, ShaderDataType type) {
 		final var baseName = sanitize(hint);
 		final var name = allocateName(baseName);
 
-		return new ShaderVariable<>(name, type);
+		return new ShaderVariable(name, type);
 	}
 
 	public String allocateName(String baseName) {

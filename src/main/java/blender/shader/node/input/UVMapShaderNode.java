@@ -15,17 +15,17 @@ import lombok.ToString;
 @RequiredArgsConstructor
 public class UVMapShaderNode extends ShaderNode {
 
-	public static final List<ShaderSocket<?>> OUTPUTS = List.of(
-		new ShaderSocket<>("UV", ShaderDataType.VECTOR, 0)
+	public static final List<ShaderSocket> OUTPUTS = List.of(
+		new ShaderSocket("UV", ShaderDataType.VECTOR, 0)
 	);
 
 	@Override
-	public List<ShaderSocket<?>> getInputs() {
+	public List<ShaderSocket> getInputs() {
 		return Collections.emptyList();
 	}
 
 	@Override
-	public List<ShaderSocket<?>> getOutputs() {
+	public List<ShaderSocket> getOutputs() {
 		return OUTPUTS;
 	}
 

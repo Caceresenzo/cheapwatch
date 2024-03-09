@@ -20,7 +20,7 @@ public class GroupShaderNode extends ShaderNode {
 	private @ToString.Exclude @Getter ShaderNodeGroup target;
 
 	@Override
-	public List<ShaderSocket<?>> getInputs() {
+	public List<ShaderSocket> getInputs() {
 		if (target != null) {
 			return target.getInputs();
 		}
@@ -29,7 +29,7 @@ public class GroupShaderNode extends ShaderNode {
 	}
 
 	@Override
-	public List<ShaderSocket<?>> getOutputs() {
+	public List<ShaderSocket> getOutputs() {
 		if (target != null) {
 			return target.getOutputs();
 		}

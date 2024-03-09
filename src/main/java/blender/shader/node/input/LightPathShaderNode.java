@@ -13,29 +13,29 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class LightPathShaderNode extends ShaderNode {
 
-	public static final List<ShaderSocket<?>> OUTPUTS = List.of(
-		new ShaderSocket<>("Is Camera Ray", ShaderDataType.VALUE, 0),
-		new ShaderSocket<>("Is Shadow Ray", ShaderDataType.VALUE, 1),
-		new ShaderSocket<>("Is Diffuse Ray", ShaderDataType.VALUE, 2),
-		new ShaderSocket<>("Is Glossy Ray", ShaderDataType.VALUE, 3),
-		new ShaderSocket<>("Is Singular Ray", ShaderDataType.VALUE, 4),
-		new ShaderSocket<>("Is Reflection Ray", ShaderDataType.VALUE, 5),
-		new ShaderSocket<>("Is Transmission Ray", ShaderDataType.VALUE, 6),
-		new ShaderSocket<>("Ray Length", ShaderDataType.VALUE, 7),
-		new ShaderSocket<>("Ray Depth", ShaderDataType.VALUE, 8),
-		new ShaderSocket<>("Diffuse Depth", ShaderDataType.VALUE, 9),
-		new ShaderSocket<>("Glossy Depth", ShaderDataType.VALUE, 10),
-		new ShaderSocket<>("Transparent Depth", ShaderDataType.VALUE, 11),
-		new ShaderSocket<>("Transmission Depth", ShaderDataType.VALUE, 12)
+	public static final List<ShaderSocket> OUTPUTS = List.of(
+		new ShaderSocket("Is Camera Ray", ShaderDataType.VALUE, 0),
+		new ShaderSocket("Is Shadow Ray", ShaderDataType.VALUE, 1),
+		new ShaderSocket("Is Diffuse Ray", ShaderDataType.VALUE, 2),
+		new ShaderSocket("Is Glossy Ray", ShaderDataType.VALUE, 3),
+		new ShaderSocket("Is Singular Ray", ShaderDataType.VALUE, 4),
+		new ShaderSocket("Is Reflection Ray", ShaderDataType.VALUE, 5),
+		new ShaderSocket("Is Transmission Ray", ShaderDataType.VALUE, 6),
+		new ShaderSocket("Ray Length", ShaderDataType.VALUE, 7),
+		new ShaderSocket("Ray Depth", ShaderDataType.VALUE, 8),
+		new ShaderSocket("Diffuse Depth", ShaderDataType.VALUE, 9),
+		new ShaderSocket("Glossy Depth", ShaderDataType.VALUE, 10),
+		new ShaderSocket("Transparent Depth", ShaderDataType.VALUE, 11),
+		new ShaderSocket("Transmission Depth", ShaderDataType.VALUE, 12)
 	);
 
 	@Override
-	public List<ShaderSocket<?>> getInputs() {
+	public List<ShaderSocket> getInputs() {
 		return Collections.emptyList();
 	}
 
 	@Override
-	public List<ShaderSocket<?>> getOutputs() {
+	public List<ShaderSocket> getOutputs() {
 		return OUTPUTS;
 	}
 

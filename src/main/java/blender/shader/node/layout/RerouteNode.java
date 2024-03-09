@@ -13,16 +13,16 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class RerouteNode extends ShaderNode {
 
-	private final List<ShaderSocket<?>> inputs = new ArrayList<>();
-	private final List<ShaderSocket<?>> outputs = new ArrayList<>();
+	private final List<ShaderSocket> inputs = new ArrayList<>();
+	private final List<ShaderSocket> outputs = new ArrayList<>();
 
 	@Override
-	public List<ShaderSocket<?>> getInputs() {
+	public List<ShaderSocket> getInputs() {
 		return Collections.unmodifiableList(inputs);
 	}
 
 	@Override
-	public List<ShaderSocket<?>> getOutputs() {
+	public List<ShaderSocket> getOutputs() {
 		return Collections.unmodifiableList(outputs);
 	}
 
@@ -31,12 +31,12 @@ public class RerouteNode extends ShaderNode {
 		writer.comment("reroute");
 	}
 
-	public RerouteNode addInput(ShaderSocket<?> socket) {
+	public RerouteNode addInput(ShaderSocket socket) {
 		this.inputs.add(socket);
 		return this;
 	}
 
-	public RerouteNode addOutput(ShaderSocket<?> socket) {
+	public RerouteNode addOutput(ShaderSocket socket) {
 		this.outputs.add(socket);
 		return this;
 	}

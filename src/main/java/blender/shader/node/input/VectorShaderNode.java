@@ -17,19 +17,19 @@ import lombok.ToString;
 @RequiredArgsConstructor
 public class VectorShaderNode extends ShaderNode {
 
-	public static final List<ShaderSocket<?>> OUTPUTS = List.of(
-		new ShaderSocket<>("Vector", ShaderDataType.VECTOR, 0)
+	public static final List<ShaderSocket> OUTPUTS = List.of(
+		new ShaderSocket("Vector", ShaderDataType.VECTOR, 0)
 	);
 
 	private final Vector3fc value;
 
 	@Override
-	public List<ShaderSocket<?>> getInputs() {
+	public List<ShaderSocket> getInputs() {
 		return Collections.emptyList();
 	}
 
 	@Override
-	public List<ShaderSocket<?>> getOutputs() {
+	public List<ShaderSocket> getOutputs() {
 		return OUTPUTS;
 	}
 

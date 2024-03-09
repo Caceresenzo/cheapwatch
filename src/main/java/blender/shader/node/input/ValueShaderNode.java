@@ -15,8 +15,8 @@ import lombok.ToString;
 @RequiredArgsConstructor
 public class ValueShaderNode extends ShaderNode {
 
-	public static final List<ShaderSocket<?>> OUTPUTS = List.of(
-		new ShaderSocket<>("Value", ShaderDataType.VALUE, 0)
+	public static final List<ShaderSocket> OUTPUTS = List.of(
+		new ShaderSocket("Value", ShaderDataType.VALUE, 0)
 	);
 
 	private final float value;
@@ -26,12 +26,12 @@ public class ValueShaderNode extends ShaderNode {
 	}
 
 	@Override
-	public List<ShaderSocket<?>> getInputs() {
+	public List<ShaderSocket> getInputs() {
 		return Collections.emptyList();
 	}
 
 	@Override
-	public List<ShaderSocket<?>> getOutputs() {
+	public List<ShaderSocket> getOutputs() {
 		return OUTPUTS;
 	}
 

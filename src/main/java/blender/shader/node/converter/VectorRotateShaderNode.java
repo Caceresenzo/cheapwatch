@@ -16,25 +16,25 @@ import lombok.ToString;
 @RequiredArgsConstructor
 public class VectorRotateShaderNode extends ShaderNode {
 
-	public static final List<ShaderSocket<?>> INPUTS = List.of(
-		new ShaderSocket<>("Vector", ShaderDataType.VECTOR, 0),
-		new ShaderSocket<>("Center", ShaderDataType.VECTOR, 1),
-		new ShaderSocket<>("Axis", ShaderDataType.VECTOR, new Vector3f(0.0f, 0.0f, 1.0f), 2),
-		new ShaderSocket<>("Angle", ShaderDataType.VALUE, 3),
-		new ShaderSocket<>("Rotation", ShaderDataType.VECTOR, 4)
+	public static final List<ShaderSocket> INPUTS = List.of(
+		new ShaderSocket("Vector", ShaderDataType.VECTOR, 0),
+		new ShaderSocket("Center", ShaderDataType.VECTOR, 1),
+		new ShaderSocket("Axis", ShaderDataType.VECTOR, new Vector3f(0.0f, 0.0f, 1.0f), 2),
+		new ShaderSocket("Angle", ShaderDataType.VALUE, 3),
+		new ShaderSocket("Rotation", ShaderDataType.VECTOR, 4)
 	);
 
-	public static final List<ShaderSocket<?>> OUTPUTS = List.of(
-		new ShaderSocket<>("Vector", ShaderDataType.VECTOR, 0)
+	public static final List<ShaderSocket> OUTPUTS = List.of(
+		new ShaderSocket("Vector", ShaderDataType.VECTOR, 0)
 	);
 
 	@Override
-	public List<ShaderSocket<?>> getInputs() {
+	public List<ShaderSocket> getInputs() {
 		return INPUTS;
 	}
 
 	@Override
-	public List<ShaderSocket<?>> getOutputs() {
+	public List<ShaderSocket> getOutputs() {
 		return OUTPUTS;
 	}
 
