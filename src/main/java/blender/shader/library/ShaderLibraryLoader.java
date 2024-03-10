@@ -58,7 +58,11 @@ public class ShaderLibraryLoader {
 			registerFactory("ShaderNodeNormalMap", NormalMapShaderNode::new);
 			registerFactory("ShaderNodeTangent", TangentShaderNode::new);
 			registerFactory("ShaderNodeUVMap", UVMapShaderNode::new);
-			registerFactory("ShaderNodeValue", ValueShaderNode::new);
+			registerComplexFactory("ShaderNodeValue", (parent, jsonNode) -> {
+				final var defaultValue = jsonNode.get("outputs").get(0).get("default_value").floatValue();
+
+				return new ValueShaderNode(defaultValue);
+			});
 			registerFactory("ShaderNodeVertexColor", VertexColorShaderNode::new);
 		}
 
@@ -67,7 +71,7 @@ public class ShaderLibraryLoader {
 			registerFactory("ShaderNodeCombineXYZ", CombineXYZShaderNode::new);
 			registerFactory("ShaderNodeInvert", InvertShaderNode::new);
 
-			registerFactory("ShaderNodeMath", (parent, attributes) -> {
+			registerSimpleFactory("ShaderNodeMath", (parent, attributes) -> {
 				final var rawOperation = attributes.get("operation").asText();
 				final var clamp = attributes.get("use_clamp").asBoolean();
 
@@ -76,7 +80,7 @@ public class ShaderLibraryLoader {
 				return new MathShaderNode(operation, clamp);
 			});
 
-			registerFactory("ShaderNodeMix", (parent, attributes) -> {
+			registerSimpleFactory("ShaderNodeMix", (parent, attributes) -> {
 				final var clampFactor = attributes.get("clamp_factor").asBoolean();
 				final var clampResult = attributes.get("clamp_result").asBoolean();
 				final var factorMode = MixShaderNode.FactorMode.valueOf(attributes.get("factor_mode").asText());
@@ -88,7 +92,7 @@ public class ShaderLibraryLoader {
 			registerFactory("ShaderNodeSeparateColor", SeparateColorShaderNode::new);
 			registerFactory("ShaderNodeSeparateXYZ", SeparateXYZShaderNode::new);
 
-			registerFactory("ShaderNodeVectorMath", (parent, attributes) -> {
+			registerSimpleFactory("ShaderNodeVectorMath", (parent, attributes) -> {
 				final var rawOperation = attributes.get("operation").asText();
 
 				final var operation = VectorMathShaderNode.Operation.valueOf(rawOperation);
@@ -111,9 +115,9 @@ public class ShaderLibraryLoader {
 		}
 
 		if (true) { /* group */
-			registerFactory("NodeGroupInput", (parent, attributes) -> parent.getInputNode());
-			registerFactory("NodeGroupOutput", (parent, attributes) -> parent.getOutputNode());
-			registerFactory("ShaderNodeGroup", (parent, attributes) -> {
+			registerSimpleFactory("NodeGroupInput", (parent, attributes) -> parent.getInputNode());
+			registerSimpleFactory("NodeGroupOutput", (parent, attributes) -> parent.getOutputNode());
+			registerSimpleFactory("ShaderNodeGroup", (parent, attributes) -> {
 				final var treeName = attributes.get("node_tree").asText();
 
 				return new GroupShaderNode(treeName);
@@ -178,9 +182,8 @@ public class ShaderLibraryLoader {
 	public void addNodes(ShaderNodeGroup group, JsonNode nodesRoot) {
 		for (final var nodeJsonNode : nodesRoot) {
 			final var node = createNode(
-				nodeJsonNode.get("type").asText(),
-				group,
-				nodeJsonNode.get("attributes")
+				nodeJsonNode,
+				group
 			);
 
 			node.setName(nodeJsonNode.get("name").asText());
@@ -264,21 +267,33 @@ public class ShaderLibraryLoader {
 		}
 	}
 
-	public ShaderNode createNode(String type, ShaderNodeGroup parent, JsonNode attributes) {
+	public ShaderNode createNode(JsonNode jsonNode, ShaderNodeGroup parent) {
+		final var type = jsonNode.get("type").asText();
 		final var factory = factories.get(type);
 
 		if (factory == null) {
 			throw new IllegalStateException("unknown blender idname: " + type);
 		}
 
-		return factory.apply(parent, attributes);
+		return factory.apply(parent, jsonNode);
 	}
 
 	public ShaderLibraryLoader registerFactory(String type, Supplier<ShaderNode> getter) {
-		return registerFactory(type, (parent, attributes) -> getter.get());
+		return registerSimpleFactory(type, (parent, jsonNode) -> getter.get());
 	}
 
-	public ShaderLibraryLoader registerFactory(String type, BiFunction<ShaderNodeGroup, JsonNode, ShaderNode> function) {
+	public ShaderLibraryLoader registerSimpleFactory(String type, BiFunction<ShaderNodeGroup, JsonNode, ShaderNode> function) {
+		final BiFunction<ShaderNodeGroup, JsonNode, ShaderNode> simplified = (parent, jsonNode) -> {
+			final var attributes = jsonNode.get("attributes");
+
+			return function.apply(parent, attributes);
+		};
+
+		factories.put(type, simplified);
+		return this;
+	}
+
+	public ShaderLibraryLoader registerComplexFactory(String type, BiFunction<ShaderNodeGroup, JsonNode, ShaderNode> function) {
 		factories.put(type, function);
 		return this;
 	}
