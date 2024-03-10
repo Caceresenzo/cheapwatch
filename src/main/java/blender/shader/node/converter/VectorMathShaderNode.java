@@ -75,8 +75,8 @@ public class VectorMathShaderNode extends ShaderNode {
 			@Override
 			public AstNode toAstNode(ShaderVariables variables) {
 				return new BinaryOperation(
-					"+",
 					new Identifier(variables.getInput(0).name()),
+					"+",
 					new Identifier(variables.getInput(1).name())
 				);
 			}
@@ -87,8 +87,8 @@ public class VectorMathShaderNode extends ShaderNode {
 			@Override
 			public AstNode toAstNode(ShaderVariables variables) {
 				return new BinaryOperation(
-					"-",
 					new Identifier(variables.getInput(0).name()),
+					"-",
 					new Identifier(variables.getInput(1).name())
 				);
 			}
@@ -99,8 +99,8 @@ public class VectorMathShaderNode extends ShaderNode {
 			@Override
 			public AstNode toAstNode(ShaderVariables variables) {
 				return new BinaryOperation(
-					"*",
 					new Identifier(variables.getInput(0).name()),
+					"*",
 					new Identifier(variables.getInput(1).name())
 				);
 			}
@@ -111,8 +111,8 @@ public class VectorMathShaderNode extends ShaderNode {
 			@Override
 			public AstNode toAstNode(ShaderVariables variables) {
 				return new BinaryOperation(
-					"/",
 					new Identifier(variables.getInput(0).name()),
+					"/",
 					new Identifier(variables.getInput(1).name())
 				);
 			}
@@ -125,10 +125,8 @@ public class VectorMathShaderNode extends ShaderNode {
 			public AstNode toAstNode(ShaderVariables variables) {
 				return new FunctionCall(
 					"cross",
-					List.of(
-						new Identifier(variables.getInput(0).name()),
-						new Identifier(variables.getInput(1).name())
-					)
+					new Identifier(variables.getInput(0).name()),
+					new Identifier(variables.getInput(1).name())
 				);
 			}
 
@@ -141,10 +139,8 @@ public class VectorMathShaderNode extends ShaderNode {
 			public AstNode toAstNode(ShaderVariables variables) {
 				return new FunctionCall(
 					"dot",
-					List.of(
-						new Identifier(variables.getInput(0).name()),
-						new Identifier(variables.getInput(1).name())
-					)
+					new Identifier(variables.getInput(0).name()),
+					new Identifier(variables.getInput(1).name())
 				);
 			}
 
@@ -157,9 +153,7 @@ public class VectorMathShaderNode extends ShaderNode {
 			public AstNode toAstNode(ShaderVariables variables) {
 				return new FunctionCall(
 					"length",
-					List.of(
-						new Identifier(variables.getInput(0).name())
-					)
+					new Identifier(variables.getInput(0).name())
 				);
 			}
 
@@ -171,9 +165,7 @@ public class VectorMathShaderNode extends ShaderNode {
 			public AstNode toAstNode(ShaderVariables variables) {
 				return new FunctionCall(
 					"normalize",
-					List.of(
-						new Identifier(variables.getInput(0).name())
-					)
+					new Identifier(variables.getInput(0).name())
 				);
 			}
 
@@ -194,9 +186,7 @@ public class VectorMathShaderNode extends ShaderNode {
 			public AstNode toAstNode(ShaderVariables variables) {
 				return new FunctionCall(
 					"sin",
-					List.of(
-						new Identifier(variables.getInput(0).name())
-					)
+					new Identifier(variables.getInput(0).name())
 				);
 			}
 
@@ -207,9 +197,7 @@ public class VectorMathShaderNode extends ShaderNode {
 			public AstNode toAstNode(ShaderVariables variables) {
 				return new FunctionCall(
 					"cos",
-					List.of(
-						new Identifier(variables.getInput(0).name())
-					)
+					new Identifier(variables.getInput(0).name())
 				);
 			}
 
@@ -222,12 +210,10 @@ public class VectorMathShaderNode extends ShaderNode {
 			@Override
 			public AstNode toAstNode(ShaderVariables variables) {
 				return new BinaryOperation(
+					new Identifier(variables.getInput(0).name()),
+					"*",
+					new Identifier(variables.getInput(1).name()),
 					"+",
-					new BinaryOperation(
-						"*",
-						new Identifier(variables.getInput(0).name()),
-						new Identifier(variables.getInput(1).name())
-					),
 					new Identifier(variables.getInput(2).name())
 				);
 			}

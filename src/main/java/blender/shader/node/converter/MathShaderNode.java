@@ -76,8 +76,8 @@ public class MathShaderNode extends ShaderNode {
 			@Override
 			public AstNode toAstNode(ShaderVariables variables) {
 				return new BinaryOperation(
-					"+",
 					new Identifier(variables.getInput(0).name()),
+					"+",
 					new Identifier(variables.getInput(1).name())
 				);
 			}
@@ -88,8 +88,8 @@ public class MathShaderNode extends ShaderNode {
 			@Override
 			public AstNode toAstNode(ShaderVariables variables) {
 				return new BinaryOperation(
-					"-",
 					new Identifier(variables.getInput(0).name()),
+					"-",
 					new Identifier(variables.getInput(1).name())
 				);
 			}
@@ -100,8 +100,8 @@ public class MathShaderNode extends ShaderNode {
 			@Override
 			public AstNode toAstNode(ShaderVariables variables) {
 				return new BinaryOperation(
-					"*",
 					new Identifier(variables.getInput(0).name()),
+					"*",
 					new Identifier(variables.getInput(1).name())
 				);
 			}
@@ -112,8 +112,8 @@ public class MathShaderNode extends ShaderNode {
 			@Override
 			public AstNode toAstNode(ShaderVariables variables) {
 				return new BinaryOperation(
-					"/",
 					new Identifier(variables.getInput(0).name()),
+					"/",
 					new Identifier(variables.getInput(1).name())
 				);
 			}
@@ -129,9 +129,7 @@ public class MathShaderNode extends ShaderNode {
 			public AstNode toAstNode(ShaderVariables variables) {
 				return new FunctionCall(
 					"asin",
-					List.of(
-						new Identifier(variables.getInput(0).name())
-					)
+					new Identifier(variables.getInput(0).name())
 				);
 			}
 
@@ -142,9 +140,7 @@ public class MathShaderNode extends ShaderNode {
 			public AstNode toAstNode(ShaderVariables variables) {
 				return new FunctionCall(
 					"acos",
-					List.of(
-						new Identifier(variables.getInput(0).name())
-					)
+					new Identifier(variables.getInput(0).name())
 				);
 			}
 
@@ -156,10 +152,8 @@ public class MathShaderNode extends ShaderNode {
 			public AstNode toAstNode(ShaderVariables variables) {
 				return new FunctionCall(
 					"pow",
-					List.of(
-						new Identifier(variables.getInput(0).name()),
-						new Identifier(variables.getInput(1).name())
-					)
+					new Identifier(variables.getInput(0).name()),
+					new Identifier(variables.getInput(1).name())
 				);
 			}
 
@@ -171,10 +165,8 @@ public class MathShaderNode extends ShaderNode {
 			public AstNode toAstNode(ShaderVariables variables) {
 				return new FunctionCall(
 					"min",
-					List.of(
-						new Identifier(variables.getInput(0).name()),
-						new Identifier(variables.getInput(1).name())
-					)
+					new Identifier(variables.getInput(0).name()),
+					new Identifier(variables.getInput(1).name())
 				);
 			}
 
@@ -185,10 +177,8 @@ public class MathShaderNode extends ShaderNode {
 			public AstNode toAstNode(ShaderVariables variables) {
 				return new FunctionCall(
 					"max",
-					List.of(
-						new Identifier(variables.getInput(0).name()),
-						new Identifier(variables.getInput(1).name())
-					)
+					new Identifier(variables.getInput(0).name()),
+					new Identifier(variables.getInput(1).name())
 				);
 			}
 
@@ -200,8 +190,8 @@ public class MathShaderNode extends ShaderNode {
 			public AstNode toAstNode(ShaderVariables variables) {
 				return new Ternary(
 					new BinaryOperation(
-						"<",
 						new Identifier(variables.getInput(0).name()),
+						"<",
 						new Identifier(variables.getInput(1).name())
 					),
 					new Litteral("1.0"),
@@ -216,8 +206,8 @@ public class MathShaderNode extends ShaderNode {
 			public AstNode toAstNode(ShaderVariables variables) {
 				return new Ternary(
 					new BinaryOperation(
-						">",
 						new Identifier(variables.getInput(0).name()),
+						">",
 						new Identifier(variables.getInput(1).name())
 					),
 					new Litteral("1.0"),
@@ -233,7 +223,7 @@ public class MathShaderNode extends ShaderNode {
 			public AstNode toAstNode(ShaderVariables variables) {
 				return new FunctionCall(
 					"abs",
-					List.of(new Identifier(variables.getInput(0).name()))
+					new Identifier(variables.getInput(0).name())
 				);
 			}
 
@@ -260,7 +250,7 @@ public class MathShaderNode extends ShaderNode {
 
 			@Override
 			public AstNode toAstNode(ShaderVariables variables) {
-				return BinaryOperation.chain(
+				return new BinaryOperation(
 					new Identifier(variables.getInput(0).name()),
 					"*",
 					new Identifier(variables.getInput(1).name()),

@@ -61,7 +61,7 @@ public class NormalMapShaderNode extends ShaderNode {
 			writer.append(new VariableDeclaration(
 				v.type().getCodeType(),
 				v.name(),
-				BinaryOperation.chain(
+				new BinaryOperation(
 					new Identifier(color.name()),
 					"*",
 					new Litteral("2.0"),
@@ -88,7 +88,7 @@ public class NormalMapShaderNode extends ShaderNode {
 				result.name(),
 				new FunctionCall(
 					"normalize",
-					BinaryOperation.chain(
+					new BinaryOperation(
 						new Identifier("mxp_tangent"),
 						"*",
 						new MemberAccess(

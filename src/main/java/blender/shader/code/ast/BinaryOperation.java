@@ -1,24 +1,142 @@
 package blender.shader.code.ast;
 
 public record BinaryOperation(
-	String operator,
 	AstNode left,
+	String operator,
 	AstNode right
 ) implements AstNode {
 
-	public static BinaryOperation chain(AstNode left, String operator1, AstNode middle, String operator2, AstNode right) {
-		return new BinaryOperation(
-			operator2,
+	public BinaryOperation(
+		AstNode node1,
+		String operator1,
+		AstNode node2,
+		String operator2,
+		AstNode node3
+	) {
+		this(
 			new BinaryOperation(
+				node1,
 				operator1,
-				left,
-				middle
+				node2
 			),
-			right
+			operator2,
+			node3
 		);
 	}
 
-	public static BinaryOperation chain(
+	public BinaryOperation(
+		AstNode node1,
+		String operator1,
+		AstNode node2,
+		String operator2,
+		AstNode node3,
+		String operator3,
+		AstNode node4
+	) {
+		this(
+			new BinaryOperation(
+				node1,
+				operator1,
+				node2,
+				operator2,
+				node3
+			),
+			operator3,
+			node4
+		);
+	}
+
+	public BinaryOperation(
+		AstNode node1,
+		String operator1,
+		AstNode node2,
+		String operator2,
+		AstNode node3,
+		String operator3,
+		AstNode node4,
+		String operator4,
+		AstNode node5
+	) {
+		this(
+			new BinaryOperation(
+				node1,
+				operator1,
+				node2,
+				operator2,
+				node3,
+				operator3,
+				node4
+			),
+			operator4,
+			node5
+		);
+	}
+
+	public BinaryOperation(
+		AstNode node1,
+		String operator1,
+		AstNode node2,
+		String operator2,
+		AstNode node3,
+		String operator3,
+		AstNode node4,
+		String operator4,
+		AstNode node5,
+		String operator5,
+		AstNode node6
+	) {
+		this(
+			new BinaryOperation(
+				node1,
+				operator1,
+				node2,
+				operator2,
+				node3,
+				operator3,
+				node4,
+				operator4,
+				node5
+			),
+			operator5,
+			node6
+		);
+	}
+
+	public BinaryOperation(
+		AstNode node1,
+		String operator1,
+		AstNode node2,
+		String operator2,
+		AstNode node3,
+		String operator3,
+		AstNode node4,
+		String operator4,
+		AstNode node5,
+		String operator5,
+		AstNode node6,
+		String operator6,
+		AstNode node7
+	) {
+		this(
+			new BinaryOperation(
+				node1,
+				operator1,
+				node2,
+				operator2,
+				node3,
+				operator3,
+				node4,
+				operator4,
+				node5,
+				operator5,
+				node6
+			),
+			operator6,
+			node7
+		);
+	}
+
+	public BinaryOperation(
 		AstNode node1,
 		String operator1,
 		AstNode node2,
@@ -35,33 +153,23 @@ public record BinaryOperation(
 		String operator7,
 		AstNode node8
 	) {
-		return new BinaryOperation(
-			operator7,
+		this(
 			new BinaryOperation(
+				node1,
+				operator1,
+				node2,
+				operator2,
+				node3,
+				operator3,
+				node4,
+				operator4,
+				node5,
+				operator5,
+				node6,
 				operator6,
-				new BinaryOperation(
-					operator5,
-					new BinaryOperation(
-						operator4,
-						new BinaryOperation(
-							operator3,
-							new BinaryOperation(
-								operator2,
-								new BinaryOperation(
-									operator1,
-									node1,
-									node2
-								),
-								node3
-							),
-							node4
-						),
-						node5
-					),
-					node6
-				),
 				node7
 			),
+			operator7,
 			node8
 		);
 	}

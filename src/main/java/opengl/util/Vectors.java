@@ -9,6 +9,8 @@ import org.joml.Vector3ic;
 
 public class Vectors {
 
+	public static final List<String> XYZ = List.of("x", "y", "z");
+
 	private static final Vector3ic ZERO_3I = new Vector3i(0);
 
 	public static Vector3ic zero3i() {

@@ -1,5 +1,5 @@
 package blender.shader.code.ast;
 
-public sealed interface AstStatement extends AstElement permits Block, CommentBlock, VariableDeclaration {
+public sealed interface AstStatement extends AstElement permits Block, CommentBlock, Define, Expression, VariableDeclaration {
 
 }

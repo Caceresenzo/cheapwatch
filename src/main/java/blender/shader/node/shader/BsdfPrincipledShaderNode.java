@@ -1,5 +1,6 @@
 package blender.shader.node.shader;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.joml.Vector3f;
@@ -9,6 +10,7 @@ import blender.shader.ShaderDataType;
 import blender.shader.ShaderSocket;
 import blender.shader.code.ShaderCodeWriter;
 import blender.shader.code.ShaderVariables;
+import blender.shader.code.ast.CommentBlock;
 import blender.shader.node.ShaderNode;
 import lombok.ToString;
 
@@ -69,7 +71,13 @@ public class BsdfPrincipledShaderNode extends ShaderNode {
 
 	@Override
 	public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
-		throw new UnsupportedOperationException();
+		// TODO impl
+
+		writer.append(new CommentBlock(
+			Collections.emptyList(),
+			"bsdf principled",
+			null
+		));
 	}
 
 }

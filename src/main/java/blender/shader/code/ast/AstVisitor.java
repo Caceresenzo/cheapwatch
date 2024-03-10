@@ -59,6 +59,23 @@ public class AstVisitor {
 				--comment;
 			}
 
+			case Define define -> {
+				appendLine();
+
+				append("#define ");
+				append(define.key());
+				append(" ");
+				append(define.value());
+
+				appendEndLine();
+			}
+
+			case Expression expression -> {
+				appendLine();
+				visit(expression.expression());
+				appendEndLine();
+			}
+
 			case FunctionCall functionCall -> {
 				append(functionCall.name());
 				append("(");
@@ -80,6 +97,14 @@ public class AstVisitor {
 				append(identifier.name());
 			}
 
+			case IndexAccess indexAccess -> {
+				visit(indexAccess.base());
+
+				append("[");
+				visit(indexAccess.index());
+				append("]");
+			}
+
 			case Litteral litteral -> {
 				append(litteral.value());
 			}
@@ -88,6 +113,12 @@ public class AstVisitor {
 				visit(memberAccess.expression());
 				append(".");
 				append(memberAccess.componentName());
+			}
+
+			case Paranthesis paranthesis -> {
+				append("(");
+				visit(paranthesis.expression());
+				append(")");
 			}
 
 			case Ternary ternary -> {

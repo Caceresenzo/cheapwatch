@@ -10,9 +10,18 @@ import blender.shader.ShaderSocket;
 import blender.shader.code.ShaderCodeWriter;
 import blender.shader.code.ShaderVariable;
 import blender.shader.code.ShaderVariables;
+import blender.shader.code.ast.BinaryOperation;
+import blender.shader.code.ast.Expression;
+import blender.shader.code.ast.FunctionCall;
+import blender.shader.code.ast.Identifier;
+import blender.shader.code.ast.Litteral;
+import blender.shader.code.ast.MemberAccess;
+import blender.shader.code.ast.Paranthesis;
+import blender.shader.code.ast.VariableDeclaration;
 import blender.shader.node.ShaderNode;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import opengl.util.Vectors;
 
 /**
  * @author https://github.com/blender/blender/blob/703353b5dafc344ac4080d280312ef3aa496b6de/source/blender/nodes/shader/nodes/node_shader_mix.cc#L341
@@ -63,11 +72,13 @@ public class MixShaderNode extends ShaderNode {
 		ShaderVariable factor;
 		final ShaderVariable value1;
 		final ShaderVariable value2;
+		final ShaderVariable result;
 
 		if (ShaderDataType.VALUE.equals(dataType)) {
 			factor = variables.getInput(0);
 			value1 = variables.getInput(2);
 			value2 = variables.getInput(3);
+			result = variables.getOutput(0);
 		} else if (ShaderDataType.VECTOR.equals(dataType)) {
 			if (FactorMode.UNIFORM.equals(factorMode)) {
 				factor = variables.getInput(0);
@@ -77,43 +88,63 @@ public class MixShaderNode extends ShaderNode {
 
 			value1 = variables.getInput(4);
 			value2 = variables.getInput(5);
+			result = variables.getOutput(1);
 		} else if (ShaderDataType.RGBA.equals(dataType)) {
 			factor = variables.getInput(0);
 			value1 = variables.getInput(6);
 			value2 = variables.getInput(7);
+			result = variables.getOutput(2);
 		} else {
 			throw new UnsupportedOperationException("dataType=%s".formatted(dataType));
 		}
 
-		//        if (clampFactor) {
-		//            final var temporary = variables.getTemporary("factor", factor.type());
-		//
-		//
-		//            factor = temporary;
-		//        }
-		//
-		//        final var floatResult = outputs.get(0);
-		//        if (floatResult.linked()) {
-		//            throw new UnsupportedOperationException("floatResult");
-		//        }
-		//
-		//        final var vectorResult = outputs.get(1);
-		//        if (vectorResult.linked()) {
-		//            throw new UnsupportedOperationException("vectorResult");
-		//        }
-		//
-		//        final var colorResult = outputs.get(2);
-		//        if (colorResult.linked()) {
-		//            throw new UnsupportedOperationException("colorResult");
-		//        }
-		//
-		//        final var rotationResult = outputs.get(3);
-		//        if (rotationResult.linked()) {
-		//            throw new UnsupportedOperationException("rotationResult");
-		//        }
-		//
-		//        System.out.println(outputs);
-		throw new UnsupportedOperationException("no result");
+		if (clampFactor) {
+			final var temporary = variables.getTemporary("factor", factor.type());
+
+			writer.append(new VariableDeclaration(
+				temporary.type().getCodeType(),
+				temporary.name(),
+				new FunctionCall(
+					"clamp",
+					new Identifier(temporary.name()),
+					new Litteral("0.0"),
+					new Litteral("1.0")
+				)
+			));
+
+			factor = temporary;
+		}
+
+		if (!ShaderDataType.RGBA.equals(dataType)) {
+			writer.append(new VariableDeclaration(
+				result.type().getCodeType(),
+				result.name(),
+				new FunctionCall(
+					"mix",
+					new Identifier(value1.name()),
+					new Identifier(value2.name()),
+					new Identifier(factor.name())
+				)
+			));
+		} else {
+			writer.append(new VariableDeclaration(
+				result.type().getCodeType(),
+				result.name(),
+				new FunctionCall(
+					"vec4",
+					new Identifier(value1.name())
+				)
+			));
+
+			blendType.generateCode(
+				writer,
+				variables,
+				new Identifier(value1.name()),
+				new Identifier(value2.name()),
+				new Identifier(factor.name()),
+				new Identifier(result.name())
+			);
+		}
 	}
 
 	public enum FactorMode {
@@ -121,15 +152,92 @@ public class MixShaderNode extends ShaderNode {
 		NON_UNIFORM;
 	}
 
+	@RequiredArgsConstructor
 	public enum BlendType {
-		MIX /* BLEND */,
-		ADD,
-		MULTIPLY,
+
+		MIX(true) {
+
+			@Override
+			public void generateCode(ShaderCodeWriter writer, Identifier value1, Identifier value2, Identifier factor, Identifier factorInverse, Identifier result, String componentName) {
+				writer.append(new Expression(
+					new BinaryOperation(
+						new MemberAccess(result, componentName),
+						"=",
+						factorInverse,
+						"*",
+						new MemberAccess(value1, componentName),
+						"+",
+						factor,
+						"*",
+						new MemberAccess(value2, componentName)
+					)
+				));
+			}
+
+		}
+		/* BLEND */,
+		ADD(false) {
+
+			@Override
+			public void generateCode(ShaderCodeWriter writer, Identifier value1, Identifier value2, Identifier factor, Identifier factorInverse, Identifier result, String componentName) {
+				writer.append(new Expression(
+					new BinaryOperation(
+						new MemberAccess(result, componentName),
+						"+=",
+						factor,
+						"*",
+						new MemberAccess(value2, componentName)
+					)
+				));
+			}
+
+		},
+		MULTIPLY(true) {
+
+			@Override
+			public void generateCode(ShaderCodeWriter writer, Identifier value1, Identifier value2, Identifier factor, Identifier factorInverse, Identifier result, String componentName) {
+				writer.append(new Expression(
+					new BinaryOperation(
+						new MemberAccess(result, componentName),
+						"*=",
+						factorInverse,
+						"+",
+						factor,
+						"*",
+						new MemberAccess(value2, componentName)
+					)
+				));
+			}
+
+		},
 		// SUB,
 		// SCREEN,
 		// DIV,
 		// DIFF,
-		DARKEN,
+		DARKEN(true) {
+
+			@Override
+			public void generateCode(ShaderCodeWriter writer, Identifier value1, Identifier value2, Identifier factor, Identifier factorInverse, Identifier result, String componentName) {
+				writer.append(new Expression(
+					new BinaryOperation(
+						new MemberAccess(result, componentName),
+						"=",
+						new FunctionCall(
+							"min",
+							new MemberAccess(value1, componentName),
+							new MemberAccess(value2, componentName)
+						),
+						"*",
+						factor,
+						"+",
+						new MemberAccess(value1, componentName),
+						"*",
+						factorInverse
+					)
+				));
+			}
+
+		},
 		// LIGHT,
 		// OVERLAY,
 		// DODGE,
@@ -138,9 +246,90 @@ public class MixShaderNode extends ShaderNode {
 		// SAT,
 		// VAL,
 		// COLOR,
-		SOFT_LIGHT,
+		SOFT_LIGHT(true) /* SOFT */ {
+
+			@Override
+			public void generateCode(ShaderCodeWriter writer, Identifier value1, Identifier value2, Identifier factor, Identifier factorInverse, Identifier result, String componentName) {
+				final var screen = new BinaryOperation(
+					new Litteral("1.0"),
+					"-",
+					new Paranthesis(new BinaryOperation(
+						new Litteral("1.0"),
+						"-",
+						new MemberAccess(value2, componentName)
+					)),
+					"*",
+					new Paranthesis(new BinaryOperation(
+						new Litteral("1.0"),
+						"-",
+						new MemberAccess(value1, componentName)
+					))
+				);
+
+				writer.append(new Expression(
+					new BinaryOperation(
+						new MemberAccess(result, componentName),
+						"=",
+						factorInverse,
+						"*",
+						new MemberAccess(value1, componentName),
+						"+",
+						factor,
+						"*",
+						new Paranthesis(new BinaryOperation(
+							new Paranthesis(new BinaryOperation(
+								new Paranthesis(new BinaryOperation(
+									new Litteral("1.0"),
+									"-",
+									new MemberAccess(value1, componentName)
+								)),
+								"*",
+								new MemberAccess(value2, componentName),
+								"*",
+								new MemberAccess(value1, componentName)
+							)),
+							"+",
+							new Paranthesis(new BinaryOperation(
+								new MemberAccess(value1, componentName),
+								"*",
+								screen
+							))
+						))
+					)
+				));
+			}
+
+		};
 		// LINEAR,
 		// EXCLUSION;
+
+		private final boolean requireFactorInverse;
+
+		public abstract void generateCode(ShaderCodeWriter writer, Identifier value1, Identifier value2, Identifier factor, Identifier factorInverse, Identifier result, String componentName);
+
+		public void generateCode(ShaderCodeWriter writer, ShaderVariables variables, Identifier value1, Identifier value2, Identifier factor, Identifier result) {
+			Identifier factorInverse = null;
+			if (requireFactorInverse) {
+				final var temporary = variables.getTemporary("facm", ShaderDataType.VALUE);
+
+				writer.append(new VariableDeclaration(
+					temporary.type().getCodeType(),
+					temporary.name(),
+					new BinaryOperation(
+						new Litteral("1.0"),
+						"-",
+						factor
+					)
+				));
+
+				factorInverse = new Identifier(temporary.name());
+			}
+
+			for (final var componentName : Vectors.XYZ) {
+				generateCode(writer, value1, value2, factor, factorInverse, result, componentName);
+			}
+		}
+
 	}
 
 }
