@@ -1,8 +1,9 @@
 import bpy
 import json
 
+
 input_fields = ["name", "bl_socket_idname", "type", "default_value", "is_linked"]
-output_fields = ["name", "bl_socket_idname", "type", "is_linked"]
+output_fields = ["name", "bl_socket_idname", "type", "default_value", "is_linked"]
 
 library = {}
 
@@ -115,6 +116,11 @@ for group in bpy.data.node_groups:
                     print("\t" * 4, field, value)
                 except AttributeError:
                     pass
+            
+            default_value = output_info.get("default_value")
+            if default_value is not None:
+                converted = convert_value(output_info["type"], default_value)
+                output_info["default_value"] = converted
 
 for group in bpy.data.node_groups:
     if not group.name.startswith("OWM: "):
