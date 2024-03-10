@@ -6,6 +6,7 @@ import java.util.List;
 import blender.shader.ShaderSocket;
 import blender.shader.code.ShaderCodeWriter;
 import blender.shader.code.ShaderVariables;
+import blender.shader.code.ast.CommentBlock;
 import blender.shader.library.ShaderLibrary;
 import blender.shader.node.ShaderNode;
 import lombok.Getter;
@@ -39,7 +40,13 @@ public class GroupShaderNode extends ShaderNode {
 
 	@Override
 	public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
-		writer.comment("treeName: %s".formatted(treeName));
+		final var block = new CommentBlock(
+			List.of(),
+			"Tree Name: %s".formatted(treeName),
+			null
+		);
+
+		writer.append(block);
 	}
 
 	public void link(ShaderLibrary library) {

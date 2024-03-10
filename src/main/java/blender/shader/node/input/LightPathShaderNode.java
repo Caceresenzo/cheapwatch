@@ -6,7 +6,13 @@ import java.util.List;
 import blender.shader.ShaderDataType;
 import blender.shader.ShaderSocket;
 import blender.shader.code.ShaderCodeWriter;
+import blender.shader.code.ShaderVariable;
 import blender.shader.code.ShaderVariables;
+import blender.shader.code.ast.AstStatement;
+import blender.shader.code.ast.CommentBlock;
+import blender.shader.code.ast.Identifier;
+import blender.shader.code.ast.Litteral;
+import blender.shader.code.ast.VariableDeclaration;
 import blender.shader.node.ShaderNode;
 import lombok.ToString;
 
@@ -42,11 +48,24 @@ public class LightPathShaderNode extends ShaderNode {
 	@Override
 	public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
 		for (final var output : variables.getOutputs()) {
-			writer
-				.declareAndAssign(output)
-				.value(ShaderDataType.VALUE, 0.0f)
-				.endLine();
+			writer.append(toAstNode(output));
 		}
+	}
+
+	public AstStatement toAstNode(ShaderVariable output) {
+		AstStatement block = new VariableDeclaration(
+			output.type().getCodeType(),
+			new Identifier(output.name()),
+			new Litteral("0.0")
+		);
+
+		if (!output.linked()) {
+			block = new CommentBlock(
+				List.of(block)
+			);
+		}
+
+		return block;
 	}
 
 }

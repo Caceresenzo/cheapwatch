@@ -8,6 +8,11 @@ import blender.shader.ShaderDataType;
 import blender.shader.ShaderSocket;
 import blender.shader.code.ShaderCodeWriter;
 import blender.shader.code.ShaderVariables;
+import blender.shader.code.ast.AstNode;
+import blender.shader.code.ast.BinaryOperation;
+import blender.shader.code.ast.FunctionCall;
+import blender.shader.code.ast.Identifier;
+import blender.shader.code.ast.VariableDeclaration;
 import blender.shader.node.ShaderNode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -50,11 +55,15 @@ public class VectorMathShaderNode extends ShaderNode {
 
 		final var result = variables.getOutput(index);
 
-		writer.declareAndAssign(result);
+		final var node = operation.toAstNode(variables);
 
-		operation.generateCode(writer, variables);
+		final var block = new VariableDeclaration(
+			result.type().getCodeType(),
+			new Identifier(result.name()),
+			node
+		);
 
-		writer.endLine();
+		writer.append(block);
 	}
 
 	@RequiredArgsConstructor
@@ -64,32 +73,48 @@ public class VectorMathShaderNode extends ShaderNode {
 		ADD(true) {
 
 			@Override
-			public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
-				writer.useBinaryOperator("+", variables.getInput(0), variables.getInput(1));
+			public AstNode toAstNode(ShaderVariables variables) {
+				return new BinaryOperation(
+					"+",
+					new Identifier(variables.getInput(0).name()),
+					new Identifier(variables.getInput(1).name())
+				);
 			}
 
 		},
 		SUBTRACT(true) {
 
 			@Override
-			public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
-				writer.useBinaryOperator("-", variables.getInput(0), variables.getInput(1));
+			public AstNode toAstNode(ShaderVariables variables) {
+				return new BinaryOperation(
+					"-",
+					new Identifier(variables.getInput(0).name()),
+					new Identifier(variables.getInput(1).name())
+				);
 			}
 
 		},
 		MULTIPLY(true) {
 
 			@Override
-			public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
-				writer.useBinaryOperator("*", variables.getInput(0), variables.getInput(1));
+			public AstNode toAstNode(ShaderVariables variables) {
+				return new BinaryOperation(
+					"*",
+					new Identifier(variables.getInput(0).name()),
+					new Identifier(variables.getInput(1).name())
+				);
 			}
 
 		},
 		DIVIDE(true) {
 
 			@Override
-			public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
-				writer.useBinaryOperator("/", variables.getInput(0), variables.getInput(1));
+			public AstNode toAstNode(ShaderVariables variables) {
+				return new BinaryOperation(
+					"/",
+					new Identifier(variables.getInput(0).name()),
+					new Identifier(variables.getInput(1).name())
+				);
 			}
 
 		},
@@ -97,8 +122,14 @@ public class VectorMathShaderNode extends ShaderNode {
 		CROSS_PRODUCT(true) {
 
 			@Override
-			public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
-				writer.useBiFunctionCall("cross", variables.getInput(0), variables.getInput(1));
+			public AstNode toAstNode(ShaderVariables variables) {
+				return new FunctionCall(
+					"cross",
+					List.of(
+						new Identifier(variables.getInput(0).name()),
+						new Identifier(variables.getInput(1).name())
+					)
+				);
 			}
 
 		},
@@ -107,8 +138,14 @@ public class VectorMathShaderNode extends ShaderNode {
 		DOT_PRODUCT(false) {
 
 			@Override
-			public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
-				writer.useBiFunctionCall("dot", variables.getInput(0), variables.getInput(1));
+			public AstNode toAstNode(ShaderVariables variables) {
+				return new FunctionCall(
+					"dot",
+					List.of(
+						new Identifier(variables.getInput(0).name()),
+						new Identifier(variables.getInput(1).name())
+					)
+				);
 			}
 
 		},
@@ -117,8 +154,13 @@ public class VectorMathShaderNode extends ShaderNode {
 		LENGTH(false) {
 
 			@Override
-			public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
-				writer.useFunctionCall("length", variables.getInput(0));
+			public AstNode toAstNode(ShaderVariables variables) {
+				return new FunctionCall(
+					"length",
+					List.of(
+						new Identifier(variables.getInput(0).name())
+					)
+				);
 			}
 
 		},
@@ -126,8 +168,13 @@ public class VectorMathShaderNode extends ShaderNode {
 		NORMALIZE(true) {
 
 			@Override
-			public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
-				writer.useFunctionCall("normalize", variables.getInput(0));
+			public AstNode toAstNode(ShaderVariables variables) {
+				return new FunctionCall(
+					"normalize",
+					List.of(
+						new Identifier(variables.getInput(0).name())
+					)
+				);
 			}
 
 		},
@@ -144,16 +191,26 @@ public class VectorMathShaderNode extends ShaderNode {
 		SINE(true) {
 
 			@Override
-			public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
-				writer.useFunctionCall("sin", variables.getInput(0));
+			public AstNode toAstNode(ShaderVariables variables) {
+				return new FunctionCall(
+					"sin",
+					List.of(
+						new Identifier(variables.getInput(0).name())
+					)
+				);
 			}
 
 		},
 		COSINE(true) {
 
 			@Override
-			public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
-				writer.useFunctionCall("cos", variables.getInput(0));
+			public AstNode toAstNode(ShaderVariables variables) {
+				return new FunctionCall(
+					"cos",
+					List.of(
+						new Identifier(variables.getInput(0).name())
+					)
+				);
 			}
 
 		},
@@ -163,23 +220,23 @@ public class VectorMathShaderNode extends ShaderNode {
 		MULTIPLY_ADD(true) {
 
 			@Override
-			public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
-				writer.useTrinaryOperator("*", "+", variables.getInput(0), variables.getInput(1), variables.getInput(2));
-			}
-
-		},
-		_END(false) {
-
-			@Override
-			public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
-				throw new UnsupportedOperationException();
+			public AstNode toAstNode(ShaderVariables variables) {
+				return new BinaryOperation(
+					"+",
+					new BinaryOperation(
+						"*",
+						new Identifier(variables.getInput(0).name()),
+						new Identifier(variables.getInput(1).name())
+					),
+					new Identifier(variables.getInput(2).name())
+				);
 			}
 
 		};
 
 		private final boolean returnsVector;
 
-		public abstract void generateCode(ShaderCodeWriter writer, ShaderVariables variables);
+		public abstract AstNode toAstNode(ShaderVariables variables);
 
 	}
 

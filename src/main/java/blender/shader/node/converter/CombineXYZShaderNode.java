@@ -8,6 +8,9 @@ import blender.shader.ShaderDataType;
 import blender.shader.ShaderSocket;
 import blender.shader.code.ShaderCodeWriter;
 import blender.shader.code.ShaderVariables;
+import blender.shader.code.ast.FunctionCall;
+import blender.shader.code.ast.Identifier;
+import blender.shader.code.ast.VariableDeclaration;
 import blender.shader.node.ShaderNode;
 import lombok.ToString;
 
@@ -41,10 +44,20 @@ public class CombineXYZShaderNode extends ShaderNode {
 		final var z = variables.getInput(2);
 		final var result = variables.getOutput(0);
 
-		writer
-			.declareAndAssign(result)
-			.value("vec3", x.name(), y.name(), z.name())
-			.endLine();
+		final var block = new VariableDeclaration(
+			result.type().getCodeType(),
+			new Identifier(result.name()),
+			new FunctionCall(
+				"vec3",
+				List.of(
+					new Identifier(x.name()),
+					new Identifier(y.name()),
+					new Identifier(z.name())
+				)
+			)
+		);
+
+		writer.append(block);
 	}
 
 }

@@ -7,6 +7,7 @@ import java.util.List;
 import blender.shader.ShaderSocket;
 import blender.shader.code.ShaderCodeWriter;
 import blender.shader.code.ShaderVariables;
+import blender.shader.code.ast.CommentBlock;
 import blender.shader.node.ShaderNode;
 import lombok.ToString;
 
@@ -28,7 +29,13 @@ public class RerouteNode extends ShaderNode {
 
 	@Override
 	public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
-		writer.comment("reroute");
+		final var block = new CommentBlock(
+			List.of(),
+			"Reroute",
+			null
+		);
+
+		writer.append(block);
 	}
 
 	public RerouteNode addInput(ShaderSocket socket) {

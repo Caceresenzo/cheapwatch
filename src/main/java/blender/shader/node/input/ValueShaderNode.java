@@ -7,6 +7,9 @@ import blender.shader.ShaderDataType;
 import blender.shader.ShaderSocket;
 import blender.shader.code.ShaderCodeWriter;
 import blender.shader.code.ShaderVariables;
+import blender.shader.code.ast.Identifier;
+import blender.shader.code.ast.Litteral;
+import blender.shader.code.ast.VariableDeclaration;
 import blender.shader.node.ShaderNode;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -39,10 +42,13 @@ public class ValueShaderNode extends ShaderNode {
 	public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
 		final var x = variables.getOutput(0);
 
-		writer
-			.declareAndAssign(x)
-			.value(x.type(), value)
-			.endLine();
+		final var block = new VariableDeclaration(
+			x.type().getCodeType(),
+			new Identifier(x.name()),
+			new Litteral(x.type().render(value))
+		);
+
+		writer.append(block);
 	}
 
 }

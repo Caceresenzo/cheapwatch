@@ -11,7 +11,7 @@ import cheapwatch.state.PlayState;
 
 public class Bootstrap {
 
-	public static void xmain(String[] args) throws Exception {
+	public static void main(String[] args) throws Exception {
 		final var objectMapper = new ObjectMapper();
 		//        final var root = (ObjectNode) objectMapper.readTree(Bootstrap.class.getResourceAsStream("/owm_unpack_blue_channel.json"));
 		//        final var root = (ObjectNode) objectMapper.readTree(Bootstrap.class.getResourceAsStream("/owm_unpack_pbr_v2.json"));
@@ -34,7 +34,7 @@ public class Bootstrap {
 		//        }
 	}
 
-	public static void main(String[] args) {
+	public static void xmain(String[] args) {
 		Game.run(new PlayState());
 	}
 

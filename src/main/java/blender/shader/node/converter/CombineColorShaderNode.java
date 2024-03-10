@@ -8,6 +8,10 @@ import blender.shader.ShaderDataType;
 import blender.shader.ShaderSocket;
 import blender.shader.code.ShaderCodeWriter;
 import blender.shader.code.ShaderVariables;
+import blender.shader.code.ast.FunctionCall;
+import blender.shader.code.ast.Identifier;
+import blender.shader.code.ast.Litteral;
+import blender.shader.code.ast.VariableDeclaration;
 import blender.shader.node.ShaderNode;
 import lombok.ToString;
 
@@ -41,10 +45,21 @@ public class CombineColorShaderNode extends ShaderNode {
 		final var blue = variables.getInput(2);
 		final var result = variables.getOutput(0);
 
-		writer
-			.declareAndAssign(result)
-			.value("vec4", red.name(), green.name(), blue.name(), "1.0")
-			.endLine();
+		final var block = new VariableDeclaration(
+			result.type().getCodeType(),
+			new Identifier(result.name()),
+			new FunctionCall(
+				"vec4",
+				List.of(
+					new Identifier(red.name()),
+					new Identifier(green.name()),
+					new Identifier(blue.name()),
+					new Litteral("1.0")
+				)
+			)
+		);
+
+		writer.append(block);
 	}
 
 }

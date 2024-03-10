@@ -9,6 +9,11 @@ import blender.shader.ShaderSocket;
 import blender.shader.code.ShaderCodeWriter;
 import blender.shader.code.ShaderVariable;
 import blender.shader.code.ShaderVariables;
+import blender.shader.code.ast.AstStatement;
+import blender.shader.code.ast.CommentBlock;
+import blender.shader.code.ast.Identifier;
+import blender.shader.code.ast.MemberAccess;
+import blender.shader.code.ast.VariableDeclaration;
 import blender.shader.node.ShaderNode;
 import lombok.ToString;
 
@@ -42,21 +47,28 @@ public class SeparateXYZShaderNode extends ShaderNode {
 		final var y = variables.getOutput(1);
 		final var z = variables.getOutput(2);
 
-		generateCode(writer, vector, x, "x");
-		generateCode(writer, vector, y, "y");
-		generateCode(writer, vector, z, "z");
+		writer.append(toAstNode(vector, x, "x"));
+		writer.append(toAstNode(vector, y, "y"));
+		writer.append(toAstNode(vector, z, "z"));
 	}
 
-	public void generateCode(ShaderCodeWriter writer, ShaderVariable input, ShaderVariable output, String outputComponent) {
+	public AstStatement toAstNode(ShaderVariable input, ShaderVariable output, String component) {
+		AstStatement block = new VariableDeclaration(
+			output.type().getCodeType(),
+			new Identifier(output.name()),
+			new MemberAccess(
+				new Identifier(input.name()),
+				component
+			)
+		);
+
 		if (!output.linked()) {
-			return;
+			block = new CommentBlock(
+				List.of(block)
+			);
 		}
 
-		writer
-			.declareAndAssign(output)
-			.value(input)
-			.field(outputComponent)
-			.endLine();
+		return block;
 	}
 
 }

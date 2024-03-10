@@ -9,6 +9,11 @@ import blender.shader.ShaderSocket;
 import blender.shader.code.ShaderCodeWriter;
 import blender.shader.code.ShaderVariable;
 import blender.shader.code.ShaderVariables;
+import blender.shader.code.ast.AstStatement;
+import blender.shader.code.ast.CommentBlock;
+import blender.shader.code.ast.Identifier;
+import blender.shader.code.ast.MemberAccess;
+import blender.shader.code.ast.VariableDeclaration;
 import blender.shader.node.ShaderNode;
 import lombok.ToString;
 
@@ -42,21 +47,28 @@ public class SeparateColorShaderNode extends ShaderNode {
 		final var green = variables.getOutput(1);
 		final var blue = variables.getOutput(2);
 
-		generateCode(writer, color, red, "red");
-		generateCode(writer, color, green, "green");
-		generateCode(writer, color, blue, "blue");
+		writer.append(toAstNode(color, red, "x"));
+		writer.append(toAstNode(color, green, "y"));
+		writer.append(toAstNode(color, blue, "z"));
 	}
 
-	public void generateCode(ShaderCodeWriter writer, ShaderVariable input, ShaderVariable output, String outputComponent) {
+	public AstStatement toAstNode(ShaderVariable input, ShaderVariable output, String component) {
+		AstStatement block = new VariableDeclaration(
+			output.type().getCodeType(),
+			new Identifier(output.name()),
+			new MemberAccess(
+				new Identifier(input.name()),
+				component
+			)
+		);
+
 		if (!output.linked()) {
-			writer.comment();
+			block = new CommentBlock(
+				List.of(block)
+			);
 		}
 
-		writer
-			.declareAndAssign(output)
-			.value(input.type(), input.name())
-			.field(outputComponent)
-			.endLine();
+		return block;
 	}
 
 }

@@ -6,6 +6,13 @@ import blender.shader.ShaderDataType;
 import blender.shader.ShaderSocket;
 import blender.shader.code.ShaderCodeWriter;
 import blender.shader.code.ShaderVariables;
+import blender.shader.code.ast.AstNode;
+import blender.shader.code.ast.BinaryOperation;
+import blender.shader.code.ast.FunctionCall;
+import blender.shader.code.ast.Identifier;
+import blender.shader.code.ast.Litteral;
+import blender.shader.code.ast.Ternary;
+import blender.shader.code.ast.VariableDeclaration;
 import blender.shader.node.ShaderNode;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -41,20 +48,25 @@ public class MathShaderNode extends ShaderNode {
 	public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
 		final var result = variables.getOutput(0);
 
-		writer
-			.declareAndAssign(result);
-
+		var node = operation.toAstNode(variables);
 		if (clamp) {
-			writer.prepareCall("clamp");
+			node = new FunctionCall(
+				"clamp",
+				List.of(
+					node,
+					new Litteral("0.0"),
+					new Litteral("1.0")
+				)
+			);
 		}
 
-		operation.generateCode(writer, variables);
+		final var block = new VariableDeclaration(
+			result.type().getCodeType(),
+			new Identifier(result.name()),
+			node
+		);
 
-		if (clamp) {
-			writer.endCall("0.0", "1.0");
-		}
-
-		writer.endLine();
+		writer.append(block);
 	}
 
 	public enum Operation {
@@ -62,32 +74,48 @@ public class MathShaderNode extends ShaderNode {
 		ADD {
 
 			@Override
-			public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
-				writer.useBinaryOperator("+", variables.getInput(0), variables.getInput(1));
+			public AstNode toAstNode(ShaderVariables variables) {
+				return new BinaryOperation(
+					"+",
+					new Identifier(variables.getInput(0).name()),
+					new Identifier(variables.getInput(1).name())
+				);
 			}
 
 		},
 		SUBTRACT {
 
 			@Override
-			public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
-				writer.useBinaryOperator("-", variables.getInput(0), variables.getInput(1));
+			public AstNode toAstNode(ShaderVariables variables) {
+				return new BinaryOperation(
+					"-",
+					new Identifier(variables.getInput(0).name()),
+					new Identifier(variables.getInput(1).name())
+				);
 			}
 
 		},
 		MULTIPLY {
 
 			@Override
-			public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
-				writer.useBinaryOperator("*", variables.getInput(0), variables.getInput(1));
+			public AstNode toAstNode(ShaderVariables variables) {
+				return new BinaryOperation(
+					"*",
+					new Identifier(variables.getInput(0).name()),
+					new Identifier(variables.getInput(1).name())
+				);
 			}
 
 		},
 		DIVIDE {
 
 			@Override
-			public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
-				writer.useBinaryOperator("/", variables.getInput(0), variables.getInput(1));
+			public AstNode toAstNode(ShaderVariables variables) {
+				return new BinaryOperation(
+					"/",
+					new Identifier(variables.getInput(0).name()),
+					new Identifier(variables.getInput(1).name())
+				);
 			}
 
 		},
@@ -98,16 +126,26 @@ public class MathShaderNode extends ShaderNode {
 		ARCSINE {
 
 			@Override
-			public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
-				writer.useFunctionCall("asin", variables.getInput(0));
+			public AstNode toAstNode(ShaderVariables variables) {
+				return new FunctionCall(
+					"asin",
+					List.of(
+						new Identifier(variables.getInput(0).name())
+					)
+				);
 			}
 
 		},
 		ARCCOSINE {
 
 			@Override
-			public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
-				writer.useFunctionCall("acos", variables.getInput(0));
+			public AstNode toAstNode(ShaderVariables variables) {
+				return new FunctionCall(
+					"acos",
+					List.of(
+						new Identifier(variables.getInput(0).name())
+					)
+				);
 			}
 
 		},
@@ -115,8 +153,14 @@ public class MathShaderNode extends ShaderNode {
 		POWER {
 
 			@Override
-			public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
-				writer.useBiFunctionCall("pow", variables.getInput(0), variables.getInput(1));
+			public AstNode toAstNode(ShaderVariables variables) {
+				return new FunctionCall(
+					"pow",
+					List.of(
+						new Identifier(variables.getInput(0).name()),
+						new Identifier(variables.getInput(1).name())
+					)
+				);
 			}
 
 		},
@@ -124,16 +168,28 @@ public class MathShaderNode extends ShaderNode {
 		MINIMUM {
 
 			@Override
-			public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
-				writer.useBiFunctionCall("min", variables.getInput(0), variables.getInput(1));
+			public AstNode toAstNode(ShaderVariables variables) {
+				return new FunctionCall(
+					"min",
+					List.of(
+						new Identifier(variables.getInput(0).name()),
+						new Identifier(variables.getInput(1).name())
+					)
+				);
 			}
 
 		},
 		MAXIMUM {
 
 			@Override
-			public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
-				writer.useBiFunctionCall("max", variables.getInput(0), variables.getInput(1));
+			public AstNode toAstNode(ShaderVariables variables) {
+				return new FunctionCall(
+					"max",
+					List.of(
+						new Identifier(variables.getInput(0).name()),
+						new Identifier(variables.getInput(1).name())
+					)
+				);
 			}
 
 		},
@@ -141,16 +197,32 @@ public class MathShaderNode extends ShaderNode {
 		LESS_THAN {
 
 			@Override
-			public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
-				writer.useComparison("<", variables.getInput(0), variables.getInput(1));
+			public AstNode toAstNode(ShaderVariables variables) {
+				return new Ternary(
+					new BinaryOperation(
+						"<",
+						new Identifier(variables.getInput(0).name()),
+						new Identifier(variables.getInput(1).name())
+					),
+					new Litteral("1.0"),
+					new Litteral("0.0")
+				);
 			}
 
 		},
 		GREATER_THAN {
 
 			@Override
-			public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
-				writer.useComparison(">", variables.getInput(0), variables.getInput(1));
+			public AstNode toAstNode(ShaderVariables variables) {
+				return new Ternary(
+					new BinaryOperation(
+						">",
+						new Identifier(variables.getInput(0).name()),
+						new Identifier(variables.getInput(1).name())
+					),
+					new Litteral("1.0"),
+					new Litteral("0.0")
+				);
 			}
 
 		},
@@ -158,8 +230,11 @@ public class MathShaderNode extends ShaderNode {
 		ABSOLUTE {
 
 			@Override
-			public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
-				writer.useFunctionCall("abs", variables.getInput(0));
+			public AstNode toAstNode(ShaderVariables variables) {
+				return new FunctionCall(
+					"abs",
+					List.of(new Identifier(variables.getInput(0).name()))
+				);
 			}
 
 		},
@@ -184,8 +259,16 @@ public class MathShaderNode extends ShaderNode {
 		MULTIPLY_ADD {
 
 			@Override
-			public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
-				writer.useTrinaryOperator("*", "+", variables.getInput(0), variables.getInput(1), variables.getInput(2));
+			public AstNode toAstNode(ShaderVariables variables) {
+				return new BinaryOperation(
+					"+",
+					new BinaryOperation(
+						"*",
+						new Identifier(variables.getInput(0).name()),
+						new Identifier(variables.getInput(1).name())
+					),
+					new Identifier(variables.getInput(2).name())
+				);
 			}
 
 		};
@@ -194,7 +277,7 @@ public class MathShaderNode extends ShaderNode {
 		//		SMOOTH_MAX,
 		//		FLOORED_MODULO,
 
-		public abstract void generateCode(ShaderCodeWriter writer, ShaderVariables variables);
+		public abstract AstNode toAstNode(ShaderVariables variables);
 
 	}
 
