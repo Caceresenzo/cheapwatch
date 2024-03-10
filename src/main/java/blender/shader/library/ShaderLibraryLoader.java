@@ -55,7 +55,13 @@ public class ShaderLibraryLoader {
 			registerFactory("ShaderNodeFresnel", FresnelShaderNode::new);
 			registerFactory("ShaderNodeNewGeometry", GeometryShaderNode::new);
 			registerFactory("ShaderNodeLightPath", LightPathShaderNode::new);
-			registerFactory("ShaderNodeNormalMap", NormalMapShaderNode::new);
+			registerSimpleFactory("ShaderNodeNormalMap", (parent, attributes) -> {
+				final var rawSpace = attributes.get("space").asText();
+
+				final var space = NormalMapShaderNode.Space.valueOf(rawSpace);
+
+				return new NormalMapShaderNode(space);
+			});
 			registerFactory("ShaderNodeTangent", TangentShaderNode::new);
 			registerFactory("ShaderNodeUVMap", UVMapShaderNode::new);
 			registerComplexFactory("ShaderNodeValue", (parent, jsonNode) -> {
