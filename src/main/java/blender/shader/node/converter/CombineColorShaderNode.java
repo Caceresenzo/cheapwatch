@@ -47,7 +47,7 @@ public class CombineColorShaderNode extends ShaderNode {
 
 		final var block = new VariableDeclaration(
 			result.type().getCodeType(),
-			new Identifier(result.name()),
+			result.name(),
 			new FunctionCall(
 				"vec4",
 				List.of(

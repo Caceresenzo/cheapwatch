@@ -14,6 +14,10 @@ import blender.shader.node.ShaderNode;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
+/**
+ * @author https://github.com/blender/blender/blob/703353b5dafc344ac4080d280312ef3aa496b6de/source/blender/nodes/shader/nodes/node_shader_mix.cc#L341
+ * @author https://github.com/blender/blender/blob/703353b5dafc344ac4080d280312ef3aa496b6de/source/blender/blenkernel/intern/material.cc#L1692
+ */
 @ToString(callSuper = true)
 @RequiredArgsConstructor
 public class MixShaderNode extends ShaderNode {

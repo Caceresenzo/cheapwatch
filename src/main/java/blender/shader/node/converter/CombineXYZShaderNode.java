@@ -46,7 +46,7 @@ public class CombineXYZShaderNode extends ShaderNode {
 
 		final var block = new VariableDeclaration(
 			result.type().getCodeType(),
-			new Identifier(result.name()),
+			result.name(),
 			new FunctionCall(
 				"vec3",
 				List.of(

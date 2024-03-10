@@ -62,7 +62,7 @@ public class MathShaderNode extends ShaderNode {
 
 		final var block = new VariableDeclaration(
 			result.type().getCodeType(),
-			new Identifier(result.name()),
+			result.name(),
 			node
 		);
 
@@ -260,13 +260,11 @@ public class MathShaderNode extends ShaderNode {
 
 			@Override
 			public AstNode toAstNode(ShaderVariables variables) {
-				return new BinaryOperation(
+				return BinaryOperation.chain(
+					new Identifier(variables.getInput(0).name()),
+					"*",
+					new Identifier(variables.getInput(1).name()),
 					"+",
-					new BinaryOperation(
-						"*",
-						new Identifier(variables.getInput(0).name()),
-						new Identifier(variables.getInput(1).name())
-					),
 					new Identifier(variables.getInput(2).name())
 				);
 			}

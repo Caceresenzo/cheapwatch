@@ -55,7 +55,7 @@ public class SeparateColorShaderNode extends ShaderNode {
 	public AstStatement toAstNode(ShaderVariable input, ShaderVariable output, String component) {
 		AstStatement block = new VariableDeclaration(
 			output.type().getCodeType(),
-			new Identifier(output.name()),
+			output.name(),
 			new MemberAccess(
 				new Identifier(input.name()),
 				component

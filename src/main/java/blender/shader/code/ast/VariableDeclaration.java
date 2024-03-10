@@ -2,6 +2,6 @@ package blender.shader.code.ast;
 
 public record VariableDeclaration(
 	String typeName,
-	Identifier identifier,
+	String name,
 	AstNode initialValue
 ) implements AstStatement {}

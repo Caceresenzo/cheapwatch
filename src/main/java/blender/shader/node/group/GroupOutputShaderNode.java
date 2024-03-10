@@ -49,7 +49,7 @@ public class GroupOutputShaderNode extends ShaderNode {
 			statements.add(
 				new VariableDeclaration(
 					variable.type().getCodeType(),
-					new Identifier(variable.name()),
+					variable.name(),
 					new FunctionCall(
 						"getSocket",
 						List.of(

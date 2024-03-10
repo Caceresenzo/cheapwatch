@@ -9,6 +9,10 @@ public class AstVisitor {
 	private int depth;
 	private int comment;
 
+	public AstVisitor() {
+		this(new StringBuilder());
+	}
+
 	public void visit(AstElement element) {
 		switch (element) {
 			case BinaryOperation binaryOperation -> {
@@ -63,7 +67,7 @@ public class AstVisitor {
 				while (iterator.hasNext()) {
 					final var argument = iterator.next();
 					visit(argument);
-					
+
 					if (iterator.hasNext()) {
 						append(", ");
 					}
@@ -100,7 +104,7 @@ public class AstVisitor {
 				appendLine();
 				append(variableDeclaration.typeName());
 				append(" ");
-				append(variableDeclaration.identifier().name());
+				append(variableDeclaration.name());
 
 				final var initialValue = variableDeclaration.initialValue();
 				if (initialValue != null) {

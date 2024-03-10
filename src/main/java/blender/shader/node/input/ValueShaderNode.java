@@ -7,7 +7,6 @@ import blender.shader.ShaderDataType;
 import blender.shader.ShaderSocket;
 import blender.shader.code.ShaderCodeWriter;
 import blender.shader.code.ShaderVariables;
-import blender.shader.code.ast.Identifier;
 import blender.shader.code.ast.Litteral;
 import blender.shader.code.ast.VariableDeclaration;
 import blender.shader.node.ShaderNode;
@@ -44,7 +43,7 @@ public class ValueShaderNode extends ShaderNode {
 
 		final var block = new VariableDeclaration(
 			x.type().getCodeType(),
-			new Identifier(x.name()),
+			x.name(),
 			new Litteral(x.type().render(value))
 		);
 

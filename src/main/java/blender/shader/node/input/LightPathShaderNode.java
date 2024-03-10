@@ -10,7 +10,6 @@ import blender.shader.code.ShaderVariable;
 import blender.shader.code.ShaderVariables;
 import blender.shader.code.ast.AstStatement;
 import blender.shader.code.ast.CommentBlock;
-import blender.shader.code.ast.Identifier;
 import blender.shader.code.ast.Litteral;
 import blender.shader.code.ast.VariableDeclaration;
 import blender.shader.node.ShaderNode;
@@ -55,7 +54,7 @@ public class LightPathShaderNode extends ShaderNode {
 	public AstStatement toAstNode(ShaderVariable output) {
 		AstStatement block = new VariableDeclaration(
 			output.type().getCodeType(),
-			new Identifier(output.name()),
+			output.name(),
 			new Litteral("0.0")
 		);
 
