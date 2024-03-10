@@ -18,6 +18,10 @@ import blender.shader.node.ShaderNode;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
+/**
+ * @author https://github.com/blender/blender/blob/703353b5dafc344ac4080d280312ef3aa496b6de/source/blender/nodes/shader/nodes/node_shader_normal_map.cc#L125
+ * @author https://github.com/AcademySoftwareFoundation/MaterialX/blob/5f9fee7ef4a29bb2e2bfbb353fb7427b8072b6dc/python/Scripts/genmdl.py#L220
+ */
 @ToString(callSuper = true)
 @RequiredArgsConstructor
 public class NormalMapShaderNode extends ShaderNode {
