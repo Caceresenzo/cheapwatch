@@ -1,5 +1,5 @@
 package blender.shader.code.ast;
 
-public record Paranthesis(
+public record Parenthesis(
 	AstNode expression
 ) implements AstNode {}

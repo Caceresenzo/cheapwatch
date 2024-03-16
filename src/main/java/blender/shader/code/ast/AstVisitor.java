@@ -115,9 +115,9 @@ public class AstVisitor {
 				append(memberAccess.componentName());
 			}
 
-			case Paranthesis paranthesis -> {
+			case Parenthesis parenthesis -> {
 				append("(");
-				visit(paranthesis.expression());
+				visit(parenthesis.expression());
 				append(")");
 			}
 

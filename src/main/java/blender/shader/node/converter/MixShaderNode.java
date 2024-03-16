@@ -16,7 +16,7 @@ import blender.shader.code.ast.FunctionCall;
 import blender.shader.code.ast.Identifier;
 import blender.shader.code.ast.Litteral;
 import blender.shader.code.ast.MemberAccess;
-import blender.shader.code.ast.Paranthesis;
+import blender.shader.code.ast.Parenthesis;
 import blender.shader.code.ast.VariableDeclaration;
 import blender.shader.node.ShaderNode;
 import lombok.RequiredArgsConstructor;
@@ -253,13 +253,13 @@ public class MixShaderNode extends ShaderNode {
 				final var screen = new BinaryOperation(
 					new Litteral("1.0"),
 					"-",
-					new Paranthesis(new BinaryOperation(
+					new Parenthesis(new BinaryOperation(
 						new Litteral("1.0"),
 						"-",
 						new MemberAccess(value2, componentName)
 					)),
 					"*",
-					new Paranthesis(new BinaryOperation(
+					new Parenthesis(new BinaryOperation(
 						new Litteral("1.0"),
 						"-",
 						new MemberAccess(value1, componentName)
@@ -276,9 +276,9 @@ public class MixShaderNode extends ShaderNode {
 						"+",
 						factor,
 						"*",
-						new Paranthesis(new BinaryOperation(
-							new Paranthesis(new BinaryOperation(
-								new Paranthesis(new BinaryOperation(
+						new Parenthesis(new BinaryOperation(
+							new Parenthesis(new BinaryOperation(
+								new Parenthesis(new BinaryOperation(
 									new Litteral("1.0"),
 									"-",
 									new MemberAccess(value1, componentName)
@@ -289,7 +289,7 @@ public class MixShaderNode extends ShaderNode {
 								new MemberAccess(value1, componentName)
 							)),
 							"+",
-							new Paranthesis(new BinaryOperation(
+							new Parenthesis(new BinaryOperation(
 								new MemberAccess(value1, componentName),
 								"*",
 								screen
