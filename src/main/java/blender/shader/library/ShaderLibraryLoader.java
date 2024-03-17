@@ -69,7 +69,11 @@ public class ShaderLibraryLoader {
 
 				return new ValueShaderNode(defaultValue);
 			});
-			registerFactory("ShaderNodeVertexColor", VertexColorShaderNode::new);
+			registerSimpleFactory("ShaderNodeVertexColor", (parent, attributes) -> {
+				final var layerName = attributes.get("layer_name").asText();
+
+				return new VertexColorShaderNode(layerName);
+			});
 		}
 
 		if (true) { /* converter */

@@ -94,7 +94,8 @@ public class Bootstrap {
 		//        for (final var name : library.names()) {
 		//            System.out.println(name);
 		//		final var group = library.get("OWM: Unpack Blue Channel");
-		final var group = library.get("OWM: Basic");
+		//		final var group = library.get("OWM: Basic");
+		final var group = library.get("OWM: Blend 2 B");
 
 		final var variableAllocator = new ShaderVariableAllocator();
 		final var codeGenerator = new ShaderCodeGenerator(group, variableAllocator, new ArrayList<>(), null);
