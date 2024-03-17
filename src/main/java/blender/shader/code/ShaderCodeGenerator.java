@@ -4,50 +4,61 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import blender.shader.ShaderLink;
+import blender.shader.code.ast.AstStatement;
 import blender.shader.graph.ShaderNodeGraph;
 import blender.shader.node.ShaderNode;
+import blender.shader.node.group.GroupInputShaderNode;
+import blender.shader.node.group.GroupShaderNode;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class ShaderCodeGenerator {
 
-	private final ShaderNodeGraph nodeGraph;
-	private final ShaderVariableAllocator variableAllocator;
+	private final @Getter ShaderNodeGraph nodeGraph;
+	private final @Getter ShaderVariableAllocator variableAllocator;
+	private final List<AstStatement> statements;
+	private final ShaderVariables parentVariables;
 	private final List<ShaderNode> visitedNodes = new ArrayList<>(); // nodes does not support hashCode
 
-	public String generate() {
+	public List<AstStatement> generate() {
 		final var last = nodeGraph.getFinalNode().orElseThrow();
 
-		final var lines = new ArrayList<String>();
-		followInReverse(last, lines);
+		followInReverse(last);
 
-		while (lines.remove("")) {
-			;
-		}
-
-		return String.join("\n", lines);
+		return statements;
 	}
 
-	public void followInReverse(ShaderNode node, List<String> lines) {
+	public void followInReverse(ShaderNode node) {
 		for (final var link : node.getReverseLinks()) {
 			final var fromNode = link.fromNode();
-			followInReverse(fromNode, lines);
-			lines.add(generate(fromNode));
+			followInReverse(fromNode);
+			generate(fromNode);
 		}
 
-		lines.add(generate(node));
+		generate(node);
 	}
 
-	public String generate(ShaderNode node) {
+	public void generate(ShaderNode node) {
 		if (visitedNodes.contains(node)) {
-			return "";
+			return;
 		}
 
+		final var writer = new ShaderCodeWriter(statements, this);
+		final var variables = allocateVariables(node);
+
+		node.generateCode(writer, variables);
+
+		visitedNodes.add(node);
+	}
+
+	public ShaderVariables allocateVariables(ShaderNode node) {
 		final var inputsArray = new ShaderVariable[node.getInputs().size()];
 		for (final var link : node.getReverseLinks()) {
-			final var variable = variableAllocator.getOrAllocateSocket(link.fromNode(), link.fromPort(), true);
-			final var index = link.toPort().index();
+			final var variable = getInputVariable(link);
 
+			final var index = link.toIndex();
 			if (inputsArray[index] != null) {
 				throw new IllegalStateException("already allocated socket?");
 			}
@@ -60,18 +71,18 @@ public class ShaderCodeGenerator {
 				continue;
 			}
 
-			final var port = node.getInputs().get(index);
+			final var socket = node.getInputs().get(index);
 
-			var defaultValue = node.getInputOverrides().get(port);
+			var defaultValue = node.getInputOverrides().get(socket);
 			var comment = "";
 			if (defaultValue == null) {
-				defaultValue = port.defaultValue();
+				defaultValue = socket.defaultValue();
 				comment = "/*default*/";
 			}
 
 			final var variable = new ShaderVariable(
-				port.type().render(defaultValue) + comment,
-				port,
+				socket.type().render(defaultValue) + comment,
+				socket,
 				false
 			);
 
@@ -82,8 +93,8 @@ public class ShaderCodeGenerator {
 
 		final var outputArray = new ShaderVariable[node.getOutputs().size()];
 		for (final var link : node.getLinks()) {
-			final var variable = variableAllocator.getOrAllocateSocket(link.fromNode(), link.fromPort(), true);
-			final var index = link.fromPort().index();
+			final var variable = variableAllocator.getOrAllocateSocket(link.fromNode(), link.fromSocket(), true);
+			final var index = link.fromIndex();
 
 			if (outputArray[index] != null) {
 				continue;
@@ -97,23 +108,35 @@ public class ShaderCodeGenerator {
 				continue;
 			}
 
-			final var port = node.getOutputs().get(index);
-			final var variable = variableAllocator.getOrAllocateSocket(node, port, false);
+			final var socket = node.getOutputs().get(index);
+			final var variable = variableAllocator.getOrAllocateSocket(node, socket, false);
 
 			outputArray[index] = variable;
 		}
 
 		final var outputs = Arrays.asList(outputArray);
 
-		final var builder = new StringBuilder();
-		final var writer = new ShaderCodeWriter(builder);
+		return new ShaderVariables(node, inputs, outputs, variableAllocator);
+	}
 
-		final var variables = new ShaderVariables(inputs, outputs, variableAllocator);
+	public ShaderVariable getInputVariable(ShaderLink link) {
+		var fromNode = link.fromNode();
 
-		node.generateCode(writer, variables);
+		if (parentVariables != null && fromNode instanceof GroupInputShaderNode) {
+			return parentVariables.getInput(link.fromIndex());
+		}
 
-		visitedNodes.add(node);
-		return builder.toString();
+		if (fromNode instanceof GroupShaderNode groupOutput) {
+			final var nodeAndSocket = groupOutput.getAtOutput(link.fromIndex());
+
+			return variableAllocator.getSocket(nodeAndSocket.getKey(), nodeAndSocket.getValue());
+		}
+
+		return variableAllocator.getOrAllocateSocket(fromNode, link.fromSocket(), true);
+	}
+
+	public ShaderCodeGenerator createChild(ShaderNodeGraph graph, ShaderVariables variables) {
+		return new ShaderCodeGenerator(graph, variableAllocator, statements, variables);
 	}
 
 }

@@ -4,12 +4,15 @@ import java.util.Collections;
 import java.util.List;
 
 import blender.shader.ShaderDataType;
+import blender.shader.node.ShaderNode;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class ShaderVariables {
 
-	private final java.util.List<ShaderVariable> inputs;
+	private final @Getter ShaderNode node;
+	private final List<ShaderVariable> inputs;
 	private final List<ShaderVariable> outputs;
 	private final ShaderVariableAllocator allocator;
 

@@ -1,5 +1,6 @@
 package blender.shader;
 
+import java.util.Map;
 import java.util.UUID;
 
 import blender.shader.node.ShaderNode;
@@ -7,24 +8,36 @@ import blender.shader.node.ShaderNode;
 public record ShaderLink(
 	UUID id,
 	ShaderNode fromNode,
-	ShaderSocket fromPort,
+	ShaderSocket fromSocket,
 	ShaderNode toNode,
-	ShaderSocket toPort
+	ShaderSocket toSocket
 ) {
 
 	public ShaderLink(
 		ShaderNode fromNode,
-		ShaderSocket fromPort,
+		ShaderSocket fromSocket,
 		ShaderNode toNode,
-		ShaderSocket toPort
+		ShaderSocket toSocket
 	) {
 		this(
 			UUID.randomUUID(),
 			fromNode,
-			fromPort,
+			fromSocket,
 			toNode,
-			toPort
+			toSocket
 		);
+	}
+
+	public int fromIndex() {
+		return fromSocket.index();
+	}
+
+	public int toIndex() {
+		return toSocket.index();
+	}
+
+	public Map.Entry<ShaderNode, ShaderSocket> from() {
+		return Map.entry(fromNode, fromSocket);
 	}
 
 	@Override

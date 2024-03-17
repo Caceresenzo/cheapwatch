@@ -119,10 +119,39 @@ public class MathShaderNode extends ShaderNode {
 			}
 
 		},
+		SINE {
 
-		//		SINE,
-		//		COSINE,
-		//		TANGENT,
+			@Override
+			public AstNode toAstNode(ShaderVariables variables) {
+				return new FunctionCall(
+					"sin",
+					new Identifier(variables.getInput(0).name())
+				);
+			}
+
+		},
+		COSINE {
+
+			@Override
+			public AstNode toAstNode(ShaderVariables variables) {
+				return new FunctionCall(
+					"cos",
+					new Identifier(variables.getInput(0).name())
+				);
+			}
+
+		},
+		TANGENT {
+
+			@Override
+			public AstNode toAstNode(ShaderVariables variables) {
+				return new FunctionCall(
+					"tan",
+					new Identifier(variables.getInput(0).name())
+				);
+			}
+
+		},
 		ARCSINE {
 
 			@Override

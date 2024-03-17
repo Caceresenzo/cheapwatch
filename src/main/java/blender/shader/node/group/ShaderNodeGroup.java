@@ -11,9 +11,11 @@ import blender.shader.node.ShaderNode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 
 @ToString(callSuper = true)
 @Getter
+@Accessors(chain = true)
 public class ShaderNodeGroup implements ShaderNodeGraph {
 
 	private @Setter String name;

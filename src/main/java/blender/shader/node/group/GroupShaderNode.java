@@ -2,6 +2,7 @@ package blender.shader.node.group;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import blender.shader.ShaderSocket;
 import blender.shader.code.ShaderCodeWriter;
@@ -38,22 +39,38 @@ public class GroupShaderNode extends ShaderNode {
 		return Collections.emptyList();
 	}
 
+	public Map.Entry<ShaderNode, ShaderSocket> getAtOutput(int index) {
+		final var socket = getOutput(index);
+
+		for (final var link : target.getOutputNode().getReverseLinks()) {
+			if (link.toSocket().equals(socket)) {
+				return link.from();
+			}
+		}
+
+		throw new IllegalArgumentException("not found");
+	}
+
 	@Override
 	public void generateCode(ShaderCodeWriter writer, ShaderVariables variables) {
-		final var block = new CommentBlock(
+		writer.append(new CommentBlock(
 			List.of(),
 			"Tree Name: %s".formatted(treeName),
 			null
-		);
+		));
 
-		writer.append(block);
+		final var childGenerator = writer.getCodeGenerator().createChild(target, variables);
+		childGenerator.generate();
 	}
 
-	public void link(ShaderLibrary library) {
+	public GroupShaderNode link(ShaderLibrary library) {
 		target = library.get(treeName);
+
 		if (target == null) {
 			throw new IllegalStateException("linkage failed, no target group found with name: %s".formatted(treeName));
 		}
+
+		return this;
 	}
 
 }

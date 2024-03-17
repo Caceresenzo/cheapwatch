@@ -3,6 +3,7 @@ package blender.shader.code;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import blender.shader.ShaderDataType;
@@ -13,6 +14,15 @@ public class ShaderVariableAllocator {
 
 	private final Map<Map.Entry<ShaderNode, ShaderSocket>, ShaderVariable> allocatedSockets = new HashMap<>();
 	private final Set<String> allocatedNames = new HashSet<>();
+
+	public ShaderVariable getSocket(ShaderNode node, ShaderSocket socket) {
+		final var key = Map.entry(node, socket);
+
+		return Objects.requireNonNull(
+			allocatedSockets.get(key),
+			() -> "variable not found for node %S via socket %s".formatted(node, socket)
+		);
+	}
 
 	public ShaderVariable getOrAllocateSocket(ShaderNode node, ShaderSocket socket, boolean linked) {
 		final var key = Map.entry(node, socket);
